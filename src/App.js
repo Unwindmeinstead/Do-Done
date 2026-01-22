@@ -113,7 +113,7 @@ export default function MinimalistTodo() {
             </p>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2 pt-20">
             {todos.map((todo) => (
               <div
                 key={todo.id}
