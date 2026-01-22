@@ -104,7 +104,21 @@ export default function MinimalistTodo() {
 
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <>
+      <style>{`
+        @keyframes wave-flow {
+          0% { transform: translateX(-100%) rotate(45deg); opacity: 0; }
+          50% { opacity: 0.6; }
+          100% { transform: translateX(100%) rotate(45deg); opacity: 0; }
+        }
+        .wave-animation {
+          animation: wave-flow 3s ease-in-out infinite;
+        }
+        .artistic-check {
+          filter: drop-shadow(0 0 2px rgba(255,255,255,0.3));
+        }
+      `}</style>
+      <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Todo List */}
       <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
         {todos.length === 0 ? (
@@ -195,14 +209,15 @@ export default function MinimalistTodo() {
                 onMouseUp={handleButtonRelease}
                 onTouchStart={handleButtonPress}
                 onTouchEnd={handleButtonRelease}
-                className={`w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 ${
-                  isRecording ? 'bg-red-600' : ''
+                className={`w-16 h-16 rounded-full bg-red-900 hover:bg-red-800 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 relative overflow-hidden ${
+                  isRecording ? 'bg-red-800' : ''
                 }`}
               >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-700 to-transparent wave-animation"></div>
                 {isRecording ? (
-                  <Mic size={32} strokeWidth={3} />
+                  <Mic size={32} strokeWidth={3} className="relative z-10" />
                 ) : (
-                  <Check size={32} strokeWidth={3} />
+                  <Check size={32} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" className="relative z-10 artistic-check transform rotate-12" />
                 )}
               </button>
             </div>
@@ -210,5 +225,6 @@ export default function MinimalistTodo() {
         </div>
       </div>
     </div>
+  </>
   );
 }
