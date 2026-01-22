@@ -108,11 +108,20 @@ export default function MinimalistTodo() {
       <style>{`
         @keyframes wave-flow {
           0% { transform: translateX(-100%) rotate(45deg); opacity: 0; }
-          50% { opacity: 0.6; }
+          50% { opacity: 0.4; }
           100% { transform: translateX(100%) rotate(45deg); opacity: 0; }
         }
+        @keyframes color-wave {
+          0% { background: linear-gradient(45deg, transparent, #fef3c7, transparent); }
+          16% { background: linear-gradient(45deg, transparent, #dbeafe, transparent); }
+          33% { background: linear-gradient(45deg, transparent, #fce7f3, transparent); }
+          50% { background: linear-gradient(45deg, transparent, #ecfdf5, transparent); }
+          66% { background: linear-gradient(45deg, transparent, #fef3c7, transparent); }
+          83% { background: linear-gradient(45deg, transparent, #dbeafe, transparent); }
+          100% { background: linear-gradient(45deg, transparent, #fce7f3, transparent); }
+        }
         .wave-animation {
-          animation: wave-flow 3s ease-in-out infinite;
+          animation: wave-flow 4s ease-in-out infinite, color-wave 8s ease-in-out infinite;
         }
         .artistic-check {
           filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
@@ -213,7 +222,7 @@ export default function MinimalistTodo() {
                   isRecording ? 'bg-gray-100' : ''
                 }`}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-400 to-transparent wave-animation"></div>
+                <div className="absolute inset-0 wave-animation"></div>
                 {isRecording ? (
                   <Mic size={32} strokeWidth={3} className="relative z-10 text-gray-800" />
                 ) : (
