@@ -104,25 +104,7 @@ export default function MinimalistTodo() {
 
 
   return (
-    <>
-      <style>{`
-        @keyframes gentle-breeze {
-          0% { background: radial-gradient(circle at 30% 30%, transparent 0%, rgba(139, 92, 246, 0.25) 30%, rgba(139, 92, 246, 0.35) 50%, rgba(139, 92, 246, 0.25) 70%, transparent 100%); }
-          16.67% { background: radial-gradient(circle at 70% 20%, transparent 0%, rgba(6, 182, 212, 0.25) 30%, rgba(6, 182, 212, 0.35) 50%, rgba(6, 182, 212, 0.25) 70%, transparent 100%); }
-          33.33% { background: radial-gradient(circle at 80% 70%, transparent 0%, rgba(16, 185, 129, 0.25) 30%, rgba(16, 185, 129, 0.35) 50%, rgba(16, 185, 129, 0.25) 70%, transparent 100%); }
-          50% { background: radial-gradient(circle at 20% 80%, transparent 0%, rgba(245, 158, 11, 0.25) 30%, rgba(245, 158, 11, 0.35) 50%, rgba(245, 158, 11, 0.25) 70%, transparent 100%); }
-          66.67% { background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(239, 68, 68, 0.25) 30%, rgba(239, 68, 68, 0.35) 50%, rgba(239, 68, 68, 0.25) 70%, transparent 100%); }
-          83.33% { background: radial-gradient(circle at 40% 60%, transparent 0%, rgba(236, 72, 153, 0.25) 30%, rgba(236, 72, 153, 0.35) 50%, rgba(236, 72, 153, 0.25) 70%, transparent 100%); }
-          100% { background: radial-gradient(circle at 60% 40%, transparent 0%, rgba(139, 92, 246, 0.25) 30%, rgba(139, 92, 246, 0.35) 50%, rgba(139, 92, 246, 0.25) 70%, transparent 100%); }
-        }
-        .wave-animation {
-          animation: gentle-breeze 15s ease-in-out infinite;
-        }
-        .artistic-check {
-          filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
-        }
-      `}</style>
-      <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Todo List */}
       <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
         {todos.length === 0 ? (
@@ -213,15 +195,14 @@ export default function MinimalistTodo() {
                 onMouseUp={handleButtonRelease}
                 onTouchStart={handleButtonPress}
                 onTouchEnd={handleButtonRelease}
-                className={`w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 relative overflow-hidden ${
+                className={`w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 ${
                   isRecording ? 'bg-gray-100' : ''
                 }`}
               >
-                <div className="absolute inset-0 rounded-full wave-animation"></div>
                 {isRecording ? (
-                  <Mic size={32} strokeWidth={3} className="relative z-10 text-gray-800" />
+                  <Mic size={32} strokeWidth={3} className="text-gray-800" />
                 ) : (
-                  <Check size={32} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" className="relative z-10 artistic-check transform rotate-12 text-gray-900" />
+                  <Check size={32} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" className="transform rotate-12 text-gray-900" />
                 )}
               </button>
             </div>
@@ -229,6 +210,5 @@ export default function MinimalistTodo() {
         </div>
       </div>
     </div>
-  </>
   );
 }
