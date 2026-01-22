@@ -85,16 +85,20 @@ export default function MinimalistTodo() {
     }, 500); // Start recording after 500ms hold
   };
 
+  const handleButtonClick = () => {
+    // Only show input if not currently recording
+    if (!isRecording) {
+      setShowInput(true);
+    }
+  };
+
   const handleButtonRelease = () => {
     if (holdTimeoutRef.current) {
       clearTimeout(holdTimeoutRef.current);
       holdTimeoutRef.current = null;
-    }
-
-    if (isRecording) {
+      // Quick release - show input (handled by onClick)
+    } else if (isRecording) {
       stopVoiceRecording();
-    } else {
-      setShowInput(true);
     }
   };
 
@@ -187,9 +191,9 @@ export default function MinimalistTodo() {
           ) : (
             <div className="flex justify-center">
               <button
+                onClick={handleButtonClick}
                 onMouseDown={handleButtonPress}
                 onMouseUp={handleButtonRelease}
-                onMouseLeave={handleButtonRelease}
                 onTouchStart={handleButtonPress}
                 onTouchEnd={handleButtonRelease}
                 className={`w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 ${
