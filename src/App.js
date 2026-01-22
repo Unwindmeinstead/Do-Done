@@ -115,7 +115,7 @@ export default function MinimalistTodo() {
           animation: wave-flow 3s ease-in-out infinite;
         }
         .artistic-check {
-          filter: drop-shadow(0 0 2px rgba(255,255,255,0.3));
+          filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
         }
       `}</style>
       <div className="min-h-screen bg-black text-white flex flex-col">
@@ -209,15 +209,15 @@ export default function MinimalistTodo() {
                 onMouseUp={handleButtonRelease}
                 onTouchStart={handleButtonPress}
                 onTouchEnd={handleButtonRelease}
-                className={`w-16 h-16 rounded-full bg-red-900 hover:bg-red-800 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 relative overflow-hidden ${
-                  isRecording ? 'bg-red-800' : ''
+                className={`w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 relative overflow-hidden ${
+                  isRecording ? 'bg-gray-100' : ''
                 }`}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-700 to-transparent wave-animation"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-400 to-transparent wave-animation"></div>
                 {isRecording ? (
-                  <Mic size={32} strokeWidth={3} className="relative z-10" />
+                  <Mic size={32} strokeWidth={3} className="relative z-10 text-gray-800" />
                 ) : (
-                  <Check size={32} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" className="relative z-10 artistic-check transform rotate-12" />
+                  <Check size={32} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" className="relative z-10 artistic-check transform rotate-12 text-gray-900" />
                 )}
               </button>
             </div>
