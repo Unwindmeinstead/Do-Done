@@ -103,31 +103,35 @@ export default function MinimalistTodo() {
       <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 pointer-events-none">
         <div className="max-w-md mx-auto pointer-events-auto">
           {showInput ? (
-            <div className="bg-zinc-900 rounded-full p-2 flex items-center gap-2 shadow-2xl">
-              <input
-                type="text"
-                value={newTodo}
-                onChange={(e) => setNewTodo(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && addTodo()}
-                placeholder="Add a priority..."
-                className="flex-1 bg-transparent px-4 py-2 text-sm focus:outline-none text-white placeholder-gray-600"
-                autoFocus
-              />
-              <button
-                onClick={addTodo}
-                className="w-12 h-12 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors"
-              >
-                <Check size={20} strokeWidth={2.5} />
-              </button>
-              <button
-                onClick={() => {
-                  setShowInput(false);
-                  setNewTodo('');
-                }}
-                className="w-12 h-12 rounded-full bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center transition-colors"
-              >
-                <X size={20} />
-              </button>
+            <div className="bg-zinc-900 rounded-full p-2 shadow-2xl overflow-hidden">
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  value={newTodo}
+                  onChange={(e) => setNewTodo(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addTodo()}
+                  placeholder="Add a priority..."
+                  className="flex-1 bg-transparent px-4 py-2 text-sm focus:outline-none text-white placeholder-gray-600 min-w-0"
+                  autoFocus
+                />
+                <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+                  <button
+                    onClick={addTodo}
+                    className="w-10 h-10 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors"
+                  >
+                    <Check size={18} strokeWidth={2.5} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowInput(false);
+                      setNewTodo('');
+                    }}
+                    className="w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center transition-colors"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="flex justify-center">
