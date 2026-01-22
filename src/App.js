@@ -177,17 +177,17 @@ export default function MinimalistTodo() {
           font-family: 'Poppins', sans-serif;
         }
       `}</style>
-      <div className="min-h-screen bg-black text-white flex flex-col">
+      <div className="h-screen bg-black text-white flex flex-col overflow-hidden">
       {/* Todo List */}
-      <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
+      <div className="flex-1 px-6 pb-24 max-w-md mx-auto w-full overflow-y-auto">
         {todos.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-white/80 text-base font-light leading-relaxed mt-8">
+          <div className="flex-1 flex items-center justify-center">
+            <p className="text-white/80 text-base font-light leading-relaxed">
               What are you getting done today?
             </p>
           </div>
         ) : (
-          <div className="space-y-2 pt-20">
+          <div className="space-y-2 pt-8">
             {todos.map((todo) => (
               <div
                 key={todo.id}
@@ -225,7 +225,7 @@ export default function MinimalistTodo() {
       </div>
 
       {/* Add Button / Input */}
-      <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 pointer-events-none">
+      <div className="fixed bottom-0 left-0 right-0 p-4 pb-6 pointer-events-none">
         <div className="max-w-md mx-auto pointer-events-auto">
           {showInput ? (
             <div className="bg-zinc-900 rounded-full p-2 shadow-2xl overflow-hidden">
