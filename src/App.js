@@ -24,15 +24,27 @@ export default function MinimalistTodo() {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognitionInstance = new SpeechRecognition();
-      recognitionInstance.continuous = false;
-      recognitionInstance.interimResults = false;
+      recognitionInstance.continuous = true;
+      recognitionInstance.interimResults = true;
       recognitionInstance.lang = 'en-US';
 
+      let finalTranscript = '';
+
       recognitionInstance.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setNewTodo(transcript);
-        setShowInput(true);
-        setIsRecording(false);
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          }
+        }
+
+        // Update with final results immediately
+        if (finalTranscript) {
+          setNewTodo(finalTranscript);
+          setShowInput(true);
+          setIsRecording(false);
+          recognitionInstance.stop();
+        }
       };
 
       recognitionInstance.onend = () => {
@@ -66,9 +78,35 @@ export default function MinimalistTodo() {
     setTodos(todos.filter(todo => todo.id !== id));
   };
 
+  const playSoftSound = () => {
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // Soft, soothing tone
+      oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4 note
+      oscillator.type = 'sine';
+
+      // Gentle fade in and out
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.5);
+    } catch (error) {
+      console.log('Audio not available');
+    }
+  };
+
   const startVoiceRecording = () => {
     if (recognition && !isRecording) {
       setIsRecording(true);
+      playSoftSound();
       recognition.start();
     }
   };
