@@ -259,49 +259,52 @@ export default function MinimalistTodo() {
               </div>
             </div>
           ) : (
-            <div className="flex justify-center overflow-hidden">
+            <div className="flex justify-center overflow-hidden relative">
               <div
                 ref={carouselRef}
-                className="flex transition-transform duration-300 ease-in-out"
-                style={{ transform: `translateX(-${carouselPosition * 80}px)` }}
+                className="relative w-20 h-16 flex items-center justify-center"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >
                 {/* Check Button */}
-                <div className="flex-shrink-0 px-2">
-                  <button
-                    onClick={handleButtonClick}
-                    onMouseDown={handleButtonPress}
-                    onMouseUp={handleButtonRelease}
-                    onTouchStart={(e) => {
-                      handleButtonPress();
-                      handleTouchStart(e);
-                    }}
-                    onTouchEnd={(e) => {
-                      handleButtonRelease();
-                      handleTouchEnd(e);
-                    }}
-                    className={`w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 ${
-                      isRecording ? 'bg-gray-100' : ''
-                    }`}
-                  >
-                    {isRecording ? (
-                      <Mic size={32} strokeWidth={3} className="text-gray-800" />
-                    ) : (
-                      <Check size={32} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" className="transform rotate-12 text-gray-900" />
-                    )}
-                  </button>
-                </div>
+                <button
+                  onClick={handleButtonClick}
+                  onMouseDown={handleButtonPress}
+                  onMouseUp={handleButtonRelease}
+                  onTouchStart={(e) => {
+                    handleButtonPress();
+                    handleTouchStart(e);
+                  }}
+                  onTouchEnd={(e) => {
+                    handleButtonRelease();
+                    handleTouchEnd(e);
+                  }}
+                  className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 ${
+                    isRecording ? 'bg-gray-100' : ''
+                  } ${carouselPosition === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
+                  style={{
+                    transition: 'all 0.3s ease-in-out'
+                  }}
+                >
+                  {isRecording ? (
+                    <Mic size={32} strokeWidth={3} className="text-gray-800" />
+                  ) : (
+                    <Check size={32} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" className="transform rotate-12 text-gray-900" />
+                  )}
+                </button>
 
                 {/* Settings Button */}
-                <div className="flex-shrink-0 px-2">
-                  <button
-                    onClick={openSettings}
-                    className="w-16 h-16 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95"
-                  >
-                    <Settings size={28} strokeWidth={2} className="text-white" />
-                  </button>
-                </div>
+                <button
+                  onClick={openSettings}
+                  className={`absolute w-16 h-16 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 ${
+                    carouselPosition === 1 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'
+                  }`}
+                  style={{
+                    transition: 'all 0.3s ease-in-out'
+                  }}
+                >
+                  <Settings size={28} strokeWidth={2} className="text-white" />
+                </button>
               </div>
             </div>
           )}
