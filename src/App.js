@@ -6,8 +6,6 @@ export default function MinimalistTodo() {
   const [newTodo, setNewTodo] = useState('');
   const [showInput, setShowInput] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [showVoiceModal, setShowVoiceModal] = useState(false);
-  const [voiceTranscript, setVoiceTranscript] = useState('');
   const [recognition, setRecognition] = useState(null);
   const holdTimeoutRef = useRef(null);
 
@@ -32,8 +30,8 @@ export default function MinimalistTodo() {
 
       recognitionInstance.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
-        setVoiceTranscript(transcript);
-        setShowVoiceModal(true);
+        setNewTodo(transcript);
+        setShowInput(true);
         setIsRecording(false);
       };
 
@@ -100,33 +98,11 @@ export default function MinimalistTodo() {
     }
   };
 
-  const confirmVoiceInput = () => {
-    setNewTodo(voiceTranscript);
-    setShowInput(true);
-    setShowVoiceModal(false);
-    setVoiceTranscript('');
-  };
-
-  const rejectVoiceInput = () => {
-    setShowVoiceModal(false);
-    setVoiceTranscript('');
-  };
 
   const activeTodos = todos.filter(t => !t.completed);
 
   return (
-    <>
-      <style>{`
-        @keyframes voice-wave {
-          0% { transform: scale(1); opacity: 0.7; }
-          50% { transform: scale(1.2); opacity: 0.4; }
-          100% { transform: scale(1.4); opacity: 0; }
-        }
-        .voice-recording {
-          animation: voice-wave 2s ease-out infinite;
-        }
-      `}</style>
-      <div className="min-h-screen bg-black text-white flex flex-col relative">
+    <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Header */}
       <div className="p-6 pb-8">
         <div className="max-w-md mx-auto">
@@ -222,24 +198,15 @@ export default function MinimalistTodo() {
               </div>
             </div>
           ) : (
-            <div className="flex justify-center relative">
-              {isRecording && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-24 h-24 rounded-full bg-red-500 voice-recording absolute"></div>
-                  <div className="w-32 h-32 rounded-full bg-red-400 voice-recording absolute" style={{ animationDelay: '0.5s' }}></div>
-                  <div className="w-40 h-40 rounded-full bg-red-300 voice-recording absolute" style={{ animationDelay: '1s' }}></div>
-                </div>
-              )}
+            <div className="flex justify-center">
               <button
                 onMouseDown={handleButtonPress}
                 onMouseUp={handleButtonRelease}
                 onMouseLeave={handleButtonRelease}
                 onTouchStart={handleButtonPress}
                 onTouchEnd={handleButtonRelease}
-                className={`w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 relative z-10 ${
-                  isRecording
-                    ? 'bg-red-600'
-                    : 'bg-red-500 hover:bg-red-600'
+                className={`w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 ${
+                  isRecording ? 'bg-red-600' : ''
                 }`}
               >
                 {isRecording ? (
@@ -252,39 +219,6 @@ export default function MinimalistTodo() {
           )}
         </div>
       </div>
-
-      {/* Voice Confirmation Modal */}
-      {showVoiceModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
-          <div className="bg-zinc-900 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-zinc-800">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Mic size={32} strokeWidth={2} />
-              </div>
-              <h3 className="text-lg font-light text-white mb-2">Voice Input</h3>
-              <p className="text-gray-400 text-sm mb-4">Is this correct?</p>
-              <div className="bg-zinc-800 rounded-lg p-4 mb-6">
-                <p className="text-white text-sm font-light">"{voiceTranscript}"</p>
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={rejectVoiceInput}
-                  className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-gray-300 py-3 px-4 rounded-full transition-colors font-light"
-                >
-                  Try Again
-                </button>
-                <button
-                  onClick={confirmVoiceInput}
-                  className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-full transition-colors font-light"
-                >
-                  Add It
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
-  </>
   );
 }
