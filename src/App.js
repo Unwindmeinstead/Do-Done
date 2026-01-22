@@ -179,10 +179,10 @@ export default function MinimalistTodo() {
       `}</style>
       <div className="h-screen bg-black text-white flex flex-col overflow-hidden">
       {/* Todo List */}
-      <div className="flex-1 px-6 pb-24 max-w-md mx-auto w-full overflow-y-auto">
+      <div className="flex-1 max-w-md mx-auto w-full overflow-y-auto">
         {todos.length === 0 ? (
-          <div className="flex-1 flex items-center justify-center">
-            <p className="text-white/80 text-base font-light leading-relaxed">
+          <div className="flex-1 flex items-center justify-center px-6">
+            <p className="text-white/90 text-lg sm:text-xl font-light leading-relaxed text-center">
               What are you getting done today?
             </p>
           </div>
