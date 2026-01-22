@@ -279,7 +279,7 @@ export default function MinimalistTodo() {
                     handleButtonRelease();
                     handleTouchEnd(e);
                   }}
-                  className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 ${
+                  className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
                     isRecording ? 'bg-gray-100' : ''
                   } ${carouselPosition === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
                   style={{
@@ -296,7 +296,7 @@ export default function MinimalistTodo() {
                 {/* Settings Button */}
                 <button
                   onClick={openSettings}
-                  className={`absolute w-16 h-16 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 ${
+                  className={`absolute w-16 h-16 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
                     carouselPosition === 1 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'
                   }`}
                   style={{
