@@ -99,26 +99,13 @@ export default function MinimalistTodo() {
   };
 
 
-  const activeTodos = todos.filter(t => !t.completed);
-
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
-      {/* Header */}
-      <div className="p-6 pb-8">
-        <div className="max-w-md mx-auto">
-          <h1 className="text-2xl font-light tracking-wide mb-2">Done</h1>
-          <p className="text-gray-500 text-sm font-light">
-            {activeTodos.length === 0
-              ? "All done. Add a new priority."
-              : `${activeTodos.length} ${activeTodos.length === 1 ? 'priority' : 'priorities'} remaining`}
-          </p>
-        </div>
-      </div>
-
       {/* Todo List */}
       <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
         {todos.length === 0 ? (
           <div className="text-center py-16">
+            <h1 className="text-2xl font-light tracking-wide mb-4 text-white">Done</h1>
             <p className="text-gray-600 text-sm font-light leading-relaxed">
               Focus on what's essential.<br />
               Limit your priorities to three<br />
