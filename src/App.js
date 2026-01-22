@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Check, X, Mic } from 'lucide-react';
+import { Check, X, Mic, Settings } from 'lucide-react';
 
 export default function MinimalistTodo() {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
   const [showInput, setShowInput] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [carouselPosition, setCarouselPosition] = useState(0); // 0 = check button, 1 = settings
   const [recognition, setRecognition] = useState(null);
   const holdTimeoutRef = useRef(null);
+  const touchStartRef = useRef(null);
+  const carouselRef = useRef(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('minimalist-todos');
@@ -140,6 +144,35 @@ export default function MinimalistTodo() {
     }
   };
 
+  const handleTouchStart = (e) => {
+    touchStartRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (!touchStartRef.current) return;
+
+    const touchEnd = e.changedTouches[0].clientX;
+    const deltaX = touchEnd - touchStartRef.current;
+
+    // Swipe right to show settings
+    if (deltaX > 50 && carouselPosition === 0) {
+      setCarouselPosition(1);
+    }
+    // Swipe left to show check button
+    else if (deltaX < -50 && carouselPosition === 1) {
+      setCarouselPosition(0);
+    }
+
+    touchStartRef.current = null;
+  };
+
+  const openSettings = () => {
+    setShowSettings(true);
+  };
+
+  const closeSettings = () => {
+    setShowSettings(false);
+  };
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
@@ -226,27 +259,99 @@ export default function MinimalistTodo() {
               </div>
             </div>
           ) : (
-            <div className="flex justify-center">
-              <button
-                onClick={handleButtonClick}
-                onMouseDown={handleButtonPress}
-                onMouseUp={handleButtonRelease}
-                onTouchStart={handleButtonPress}
-                onTouchEnd={handleButtonRelease}
-                className={`w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 ${
-                  isRecording ? 'bg-gray-100' : ''
-                }`}
+            <div className="flex justify-center overflow-hidden">
+              <div
+                ref={carouselRef}
+                className="flex transition-transform duration-300 ease-in-out"
+                style={{ transform: `translateX(-${carouselPosition * 80}px)` }}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
               >
-                {isRecording ? (
-                  <Mic size={32} strokeWidth={3} className="text-gray-800" />
-                ) : (
-                  <Check size={32} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" className="transform rotate-12 text-gray-900" />
-                )}
-              </button>
+                {/* Check Button */}
+                <div className="flex-shrink-0 px-2">
+                  <button
+                    onClick={handleButtonClick}
+                    onMouseDown={handleButtonPress}
+                    onMouseUp={handleButtonRelease}
+                    onTouchStart={(e) => {
+                      handleButtonPress();
+                      handleTouchStart(e);
+                    }}
+                    onTouchEnd={(e) => {
+                      handleButtonRelease();
+                      handleTouchEnd(e);
+                    }}
+                    className={`w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 ${
+                      isRecording ? 'bg-gray-100' : ''
+                    }`}
+                  >
+                    {isRecording ? (
+                      <Mic size={32} strokeWidth={3} className="text-gray-800" />
+                    ) : (
+                      <Check size={32} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" className="transform rotate-12 text-gray-900" />
+                    )}
+                  </button>
+                </div>
+
+                {/* Settings Button */}
+                <div className="flex-shrink-0 px-2">
+                  <button
+                    onClick={openSettings}
+                    className="w-16 h-16 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95"
+                  >
+                    <Settings size={28} strokeWidth={2} className="text-white" />
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>
       </div>
+
+      {/* Settings Modal */}
+      {showSettings && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
+          <div className="bg-zinc-900 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-zinc-800">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Settings size={32} strokeWidth={2} className="text-white" />
+              </div>
+              <h3 className="text-lg font-light text-white mb-4">Settings</h3>
+
+              {/* Settings options */}
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
+                  <span className="text-sm text-gray-300">Dark Mode</span>
+                  <div className="w-10 h-6 bg-gray-600 rounded-full relative">
+                    <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
+                  <span className="text-sm text-gray-300">Voice Input</span>
+                  <div className="w-10 h-6 bg-red-500 rounded-full relative">
+                    <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5"></div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
+                  <span className="text-sm text-gray-300">Notifications</span>
+                  <div className="w-10 h-6 bg-gray-600 rounded-full relative">
+                    <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={closeSettings}
+                className="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-full transition-colors font-light"
+              >
+                Close Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
