@@ -279,7 +279,7 @@ export default function MinimalistTodo() {
                     isRecording ? 'bg-gray-100' : ''
                   } ${carouselPosition === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
                   style={{
-                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                    transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                   }}
                 >
                   {isRecording ? (
@@ -296,7 +296,7 @@ export default function MinimalistTodo() {
                     carouselPosition === 1 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'
                   }`}
                   style={{
-                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                    transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                   }}
                 >
                     <Settings size={28} strokeWidth={2} className="text-gray-900" />
