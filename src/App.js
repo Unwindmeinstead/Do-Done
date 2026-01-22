@@ -285,5 +285,6 @@ export default function MinimalistTodo() {
         </div>
       )}
     </div>
+  </>
   );
 }
