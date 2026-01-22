@@ -171,12 +171,18 @@ export default function MinimalistTodo() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <>
+      <style>{`
+        * {
+          font-family: 'Poppins', sans-serif;
+        }
+      `}</style>
+      <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Todo List */}
       <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
         {todos.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-gray-600 text-sm font-light leading-relaxed">
+            <p className="text-white/80 text-base font-light leading-relaxed mt-8">
               What are you getting done today?
             </p>
           </div>
@@ -350,5 +356,6 @@ export default function MinimalistTodo() {
         </div>
       )}
     </div>
+  </>
   );
 }
