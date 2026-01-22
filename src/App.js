@@ -177,9 +177,7 @@ export default function MinimalistTodo() {
         {todos.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-gray-600 text-sm font-light leading-relaxed">
-              Focus on what's essential.<br />
-              Limit your priorities to three<br />
-              to achieve more.
+              What are you getting done today?
             </p>
           </div>
         ) : (
