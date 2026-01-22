@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Check, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Plus, Check, X, Mic } from 'lucide-react';
 
 export default function MinimalistTodo() {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
   const [showInput, setShowInput] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recognition, setRecognition] = useState(null);
+  const holdTimeoutRef = useRef(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('minimalist-todos');
@@ -16,6 +19,34 @@ export default function MinimalistTodo() {
   useEffect(() => {
     localStorage.setItem('minimalist-todos', JSON.stringify(todos));
   }, [todos]);
+
+  useEffect(() => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognitionInstance = new SpeechRecognition();
+      recognitionInstance.continuous = false;
+      recognitionInstance.interimResults = false;
+      recognitionInstance.lang = 'en-US';
+
+      recognitionInstance.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setNewTodo(transcript);
+        setShowInput(true);
+        setIsRecording(false);
+      };
+
+      recognitionInstance.onend = () => {
+        setIsRecording(false);
+      };
+
+      recognitionInstance.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        setIsRecording(false);
+      };
+
+      setRecognition(recognitionInstance);
+    }
+  }, []);
 
   const addTodo = () => {
     if (newTodo.trim()) {
@@ -33,6 +64,38 @@ export default function MinimalistTodo() {
 
   const deleteTodo = (id) => {
     setTodos(todos.filter(todo => todo.id !== id));
+  };
+
+  const startVoiceRecording = () => {
+    if (recognition && !isRecording) {
+      setIsRecording(true);
+      recognition.start();
+    }
+  };
+
+  const stopVoiceRecording = () => {
+    if (recognition && isRecording) {
+      recognition.stop();
+    }
+  };
+
+  const handleButtonPress = () => {
+    holdTimeoutRef.current = setTimeout(() => {
+      startVoiceRecording();
+    }, 500); // Start recording after 500ms hold
+  };
+
+  const handleButtonRelease = () => {
+    if (holdTimeoutRef.current) {
+      clearTimeout(holdTimeoutRef.current);
+      holdTimeoutRef.current = null;
+    }
+
+    if (isRecording) {
+      stopVoiceRecording();
+    } else {
+      setShowInput(true);
+    }
   };
 
   const activeTodos = todos.filter(t => !t.completed);
@@ -136,10 +199,22 @@ export default function MinimalistTodo() {
           ) : (
             <div className="flex justify-center">
               <button
-                onClick={() => setShowInput(true)}
-                className="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95"
+                onMouseDown={handleButtonPress}
+                onMouseUp={handleButtonRelease}
+                onMouseLeave={handleButtonRelease}
+                onTouchStart={handleButtonPress}
+                onTouchEnd={handleButtonRelease}
+                className={`w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-105 active:scale-95 ${
+                  isRecording
+                    ? 'bg-red-600 animate-pulse'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
               >
-                <Plus size={28} strokeWidth={2.5} />
+                {isRecording ? (
+                  <Mic size={28} strokeWidth={2.5} />
+                ) : (
+                  <Plus size={28} strokeWidth={2.5} />
+                )}
               </button>
             </div>
           )}
