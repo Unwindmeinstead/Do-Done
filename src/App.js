@@ -106,25 +106,17 @@ export default function MinimalistTodo() {
   return (
     <>
       <style>{`
-        @keyframes wave-flow {
-          0% { transform: translateX(-100%) rotate(45deg) scale(1.2); opacity: 0; }
-          30% { opacity: 0.7; transform: translateX(-20%) rotate(45deg) scale(1.1); }
-          70% { opacity: 0.7; transform: translateX(20%) rotate(45deg) scale(1.1); }
-          100% { transform: translateX(100%) rotate(45deg) scale(1.2); opacity: 0; }
-        }
-        @keyframes color-wave {
-          0% { background: linear-gradient(45deg, transparent, #8b5cf6, transparent); box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.3); }
-          12.5% { background: linear-gradient(45deg, transparent, #06b6d4, transparent); box-shadow: inset 0 0 20px rgba(6, 182, 212, 0.3); }
-          25% { background: linear-gradient(45deg, transparent, #10b981, transparent); box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.3); }
-          37.5% { background: linear-gradient(45deg, transparent, #f59e0b, transparent); box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.3); }
-          50% { background: linear-gradient(45deg, transparent, #ef4444, transparent); box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.3); }
-          62.5% { background: linear-gradient(45deg, transparent, #ec4899, transparent); box-shadow: inset 0 0 20px rgba(236, 72, 153, 0.3); }
-          75% { background: linear-gradient(45deg, transparent, #6366f1, transparent); box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.3); }
-          87.5% { background: linear-gradient(45deg, transparent, #14b8a6, transparent); box-shadow: inset 0 0 20px rgba(20, 184, 166, 0.3); }
-          100% { background: linear-gradient(45deg, transparent, #8b5cf6, transparent); box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.3); }
+        @keyframes gentle-breeze {
+          0% { background: radial-gradient(circle at 30% 30%, transparent 0%, rgba(139, 92, 246, 0.08) 30%, rgba(139, 92, 246, 0.12) 50%, rgba(139, 92, 246, 0.08) 70%, transparent 100%); }
+          16.67% { background: radial-gradient(circle at 70% 20%, transparent 0%, rgba(6, 182, 212, 0.08) 30%, rgba(6, 182, 212, 0.12) 50%, rgba(6, 182, 212, 0.08) 70%, transparent 100%); }
+          33.33% { background: radial-gradient(circle at 80% 70%, transparent 0%, rgba(16, 185, 129, 0.08) 30%, rgba(16, 185, 129, 0.12) 50%, rgba(16, 185, 129, 0.08) 70%, transparent 100%); }
+          50% { background: radial-gradient(circle at 20% 80%, transparent 0%, rgba(245, 158, 11, 0.08) 30%, rgba(245, 158, 11, 0.12) 50%, rgba(245, 158, 11, 0.08) 70%, transparent 100%); }
+          66.67% { background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(239, 68, 68, 0.08) 30%, rgba(239, 68, 68, 0.12) 50%, rgba(239, 68, 68, 0.08) 70%, transparent 100%); }
+          83.33% { background: radial-gradient(circle at 40% 60%, transparent 0%, rgba(236, 72, 153, 0.08) 30%, rgba(236, 72, 153, 0.12) 50%, rgba(236, 72, 153, 0.08) 70%, transparent 100%); }
+          100% { background: radial-gradient(circle at 60% 40%, transparent 0%, rgba(139, 92, 246, 0.08) 30%, rgba(139, 92, 246, 0.12) 50%, rgba(139, 92, 246, 0.08) 70%, transparent 100%); }
         }
         .wave-animation {
-          animation: wave-flow 3s ease-in-out infinite, color-wave 6s ease-in-out infinite;
+          animation: gentle-breeze 15s ease-in-out infinite;
         }
         .artistic-check {
           filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
@@ -225,7 +217,7 @@ export default function MinimalistTodo() {
                   isRecording ? 'bg-gray-100' : ''
                 }`}
               >
-                <div className="absolute inset-0 wave-animation"></div>
+                <div className="absolute inset-0 rounded-full wave-animation"></div>
                 {isRecording ? (
                   <Mic size={32} strokeWidth={3} className="relative z-10 text-gray-800" />
                 ) : (
