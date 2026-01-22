@@ -1,4 +1,4 @@
-# Do.Done
+# Done
 
 A minimalist, focused todo app built with React and Tailwind CSS.
 
@@ -21,8 +21,8 @@ A minimalist, focused todo app built with React and Tailwind CSS.
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Unwindmeinstead/Do-Done.git
-cd Do-Done
+git clone https://github.com/Unwindmeinstead/Done.git
+cd Done
 ```
 
 2. Install dependencies:
@@ -39,7 +39,7 @@ npm start
 
 ## Philosophy
 
-"Do.Done" is designed to help you focus on what truly matters. Instead of overwhelming you with endless task lists, it encourages you to limit your priorities to three essential tasks at a time.
+"Done" is designed to help you focus on what truly matters. Instead of overwhelming you with endless task lists, it encourages you to limit your priorities to three essential tasks at a time.
 
 > "Focus on what's essential. Limit your priorities to three to achieve more."
 

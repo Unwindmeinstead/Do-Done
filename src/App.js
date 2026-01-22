@@ -42,7 +42,7 @@ export default function MinimalistTodo() {
       {/* Header */}
       <div className="p-6 pb-8">
         <div className="max-w-md mx-auto">
-          <h1 className="text-2xl font-light tracking-wide mb-2">Do.Done</h1>
+          <h1 className="text-2xl font-light tracking-wide mb-2">Done</h1>
           <p className="text-gray-500 text-sm font-light">
             {activeTodos.length === 0
               ? "All done. Add a new priority."
