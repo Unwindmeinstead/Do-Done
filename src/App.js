@@ -107,21 +107,24 @@ export default function MinimalistTodo() {
     <>
       <style>{`
         @keyframes wave-flow {
-          0% { transform: translateX(-100%) rotate(45deg); opacity: 0; }
-          50% { opacity: 0.4; }
-          100% { transform: translateX(100%) rotate(45deg); opacity: 0; }
+          0% { transform: translateX(-100%) rotate(45deg) scale(1.2); opacity: 0; }
+          30% { opacity: 0.7; transform: translateX(-20%) rotate(45deg) scale(1.1); }
+          70% { opacity: 0.7; transform: translateX(20%) rotate(45deg) scale(1.1); }
+          100% { transform: translateX(100%) rotate(45deg) scale(1.2); opacity: 0; }
         }
         @keyframes color-wave {
-          0% { background: linear-gradient(45deg, transparent, #fef3c7, transparent); }
-          16% { background: linear-gradient(45deg, transparent, #dbeafe, transparent); }
-          33% { background: linear-gradient(45deg, transparent, #fce7f3, transparent); }
-          50% { background: linear-gradient(45deg, transparent, #ecfdf5, transparent); }
-          66% { background: linear-gradient(45deg, transparent, #fef3c7, transparent); }
-          83% { background: linear-gradient(45deg, transparent, #dbeafe, transparent); }
-          100% { background: linear-gradient(45deg, transparent, #fce7f3, transparent); }
+          0% { background: linear-gradient(45deg, transparent, #8b5cf6, transparent); box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.3); }
+          12.5% { background: linear-gradient(45deg, transparent, #06b6d4, transparent); box-shadow: inset 0 0 20px rgba(6, 182, 212, 0.3); }
+          25% { background: linear-gradient(45deg, transparent, #10b981, transparent); box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.3); }
+          37.5% { background: linear-gradient(45deg, transparent, #f59e0b, transparent); box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.3); }
+          50% { background: linear-gradient(45deg, transparent, #ef4444, transparent); box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.3); }
+          62.5% { background: linear-gradient(45deg, transparent, #ec4899, transparent); box-shadow: inset 0 0 20px rgba(236, 72, 153, 0.3); }
+          75% { background: linear-gradient(45deg, transparent, #6366f1, transparent); box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.3); }
+          87.5% { background: linear-gradient(45deg, transparent, #14b8a6, transparent); box-shadow: inset 0 0 20px rgba(20, 184, 166, 0.3); }
+          100% { background: linear-gradient(45deg, transparent, #8b5cf6, transparent); box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.3); }
         }
         .wave-animation {
-          animation: wave-flow 4s ease-in-out infinite, color-wave 8s ease-in-out infinite;
+          animation: wave-flow 3s ease-in-out infinite, color-wave 6s ease-in-out infinite;
         }
         .artistic-check {
           filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
