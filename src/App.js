@@ -107,13 +107,13 @@ export default function MinimalistTodo() {
     <>
       <style>{`
         @keyframes gentle-breeze {
-          0% { background: radial-gradient(circle at 30% 30%, transparent 0%, rgba(139, 92, 246, 0.08) 30%, rgba(139, 92, 246, 0.12) 50%, rgba(139, 92, 246, 0.08) 70%, transparent 100%); }
-          16.67% { background: radial-gradient(circle at 70% 20%, transparent 0%, rgba(6, 182, 212, 0.08) 30%, rgba(6, 182, 212, 0.12) 50%, rgba(6, 182, 212, 0.08) 70%, transparent 100%); }
-          33.33% { background: radial-gradient(circle at 80% 70%, transparent 0%, rgba(16, 185, 129, 0.08) 30%, rgba(16, 185, 129, 0.12) 50%, rgba(16, 185, 129, 0.08) 70%, transparent 100%); }
-          50% { background: radial-gradient(circle at 20% 80%, transparent 0%, rgba(245, 158, 11, 0.08) 30%, rgba(245, 158, 11, 0.12) 50%, rgba(245, 158, 11, 0.08) 70%, transparent 100%); }
-          66.67% { background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(239, 68, 68, 0.08) 30%, rgba(239, 68, 68, 0.12) 50%, rgba(239, 68, 68, 0.08) 70%, transparent 100%); }
-          83.33% { background: radial-gradient(circle at 40% 60%, transparent 0%, rgba(236, 72, 153, 0.08) 30%, rgba(236, 72, 153, 0.12) 50%, rgba(236, 72, 153, 0.08) 70%, transparent 100%); }
-          100% { background: radial-gradient(circle at 60% 40%, transparent 0%, rgba(139, 92, 246, 0.08) 30%, rgba(139, 92, 246, 0.12) 50%, rgba(139, 92, 246, 0.08) 70%, transparent 100%); }
+          0% { background: radial-gradient(circle at 30% 30%, transparent 0%, rgba(139, 92, 246, 0.25) 30%, rgba(139, 92, 246, 0.35) 50%, rgba(139, 92, 246, 0.25) 70%, transparent 100%); }
+          16.67% { background: radial-gradient(circle at 70% 20%, transparent 0%, rgba(6, 182, 212, 0.25) 30%, rgba(6, 182, 212, 0.35) 50%, rgba(6, 182, 212, 0.25) 70%, transparent 100%); }
+          33.33% { background: radial-gradient(circle at 80% 70%, transparent 0%, rgba(16, 185, 129, 0.25) 30%, rgba(16, 185, 129, 0.35) 50%, rgba(16, 185, 129, 0.25) 70%, transparent 100%); }
+          50% { background: radial-gradient(circle at 20% 80%, transparent 0%, rgba(245, 158, 11, 0.25) 30%, rgba(245, 158, 11, 0.35) 50%, rgba(245, 158, 11, 0.25) 70%, transparent 100%); }
+          66.67% { background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(239, 68, 68, 0.25) 30%, rgba(239, 68, 68, 0.35) 50%, rgba(239, 68, 68, 0.25) 70%, transparent 100%); }
+          83.33% { background: radial-gradient(circle at 40% 60%, transparent 0%, rgba(236, 72, 153, 0.25) 30%, rgba(236, 72, 153, 0.35) 50%, rgba(236, 72, 153, 0.25) 70%, transparent 100%); }
+          100% { background: radial-gradient(circle at 60% 40%, transparent 0%, rgba(139, 92, 246, 0.25) 30%, rgba(139, 92, 246, 0.35) 50%, rgba(139, 92, 246, 0.25) 70%, transparent 100%); }
         }
         .wave-animation {
           animation: gentle-breeze 15s ease-in-out infinite;
