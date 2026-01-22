@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Check, X, Mic } from 'lucide-react';
+import { Check, X, Mic } from 'lucide-react';
 
 export default function MinimalistTodo() {
   const [todos, setTodos] = useState([]);
@@ -109,7 +109,6 @@ export default function MinimalistTodo() {
       <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
         {todos.length === 0 ? (
           <div className="text-center py-16">
-            <h1 className="text-2xl font-light tracking-wide mb-4 text-white">Done</h1>
             <p className="text-gray-600 text-sm font-light leading-relaxed">
               Focus on what's essential.<br />
               Limit your priorities to three<br />
@@ -201,9 +200,9 @@ export default function MinimalistTodo() {
                 }`}
               >
                 {isRecording ? (
-                  <Mic size={28} strokeWidth={2.5} />
+                  <Mic size={32} strokeWidth={3} />
                 ) : (
-                  <Plus size={28} strokeWidth={2.5} />
+                  <Check size={32} strokeWidth={3} />
                 )}
               </button>
             </div>
