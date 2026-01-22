@@ -152,15 +152,11 @@ export default function MinimalistTodo() {
     if (!touchStartRef.current) return;
 
     const touchEnd = e.changedTouches[0].clientX;
-    const deltaX = touchEnd - touchStartRef.current;
+    const deltaX = Math.abs(touchEnd - touchStartRef.current);
 
-    // Swipe right to show settings
-    if (deltaX > 50 && carouselPosition === 0) {
-      setCarouselPosition(1);
-    }
-    // Swipe left to show check button
-    else if (deltaX < -50 && carouselPosition === 1) {
-      setCarouselPosition(0);
+    // Any swipe with sufficient distance toggles between menus
+    if (deltaX > 50) {
+      setCarouselPosition(carouselPosition === 0 ? 1 : 0);
     }
 
     touchStartRef.current = null;
