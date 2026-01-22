@@ -283,7 +283,7 @@ export default function MinimalistTodo() {
                     isRecording ? 'bg-gray-100' : ''
                   } ${carouselPosition === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
                   style={{
-                    transition: 'all 0.3s ease-in-out'
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
                   }}
                 >
                   {isRecording ? (
@@ -296,14 +296,14 @@ export default function MinimalistTodo() {
                 {/* Settings Button */}
                 <button
                   onClick={openSettings}
-                  className={`absolute w-16 h-16 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
+                  className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
                     carouselPosition === 1 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'
                   }`}
                   style={{
-                    transition: 'all 0.3s ease-in-out'
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
                   }}
                 >
-                  <Settings size={28} strokeWidth={2} className="text-white" />
+                    <Settings size={28} strokeWidth={2} className="text-gray-900" />
                 </button>
               </div>
             </div>
@@ -316,8 +316,8 @@ export default function MinimalistTodo() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
           <div className="bg-zinc-900 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-zinc-800">
             <div className="text-center">
-              <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Settings size={32} strokeWidth={2} className="text-white" />
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                <Settings size={32} strokeWidth={2} className="text-gray-900" />
               </div>
               <h3 className="text-lg font-light text-white mb-4">Settings</h3>
 
