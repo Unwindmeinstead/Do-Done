@@ -205,11 +205,23 @@ export default function MinimalistTodo() {
   };
 
   return (
-    <div className={`h-screen w-screen fixed inset-0 flex flex-col transition-colors duration-300 overflow-hidden ${
-      darkMode ? 'bg-black text-white' : 'bg-white text-black'
-    }`}>
+    <div
+      className={`flex flex-col transition-colors duration-300 overflow-hidden ${
+        darkMode ? 'bg-black text-white' : 'bg-white text-black'
+      }`}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100vw',
+        height: '100vh',
+        minHeight: '100vh'
+      }}
+    >
       {/* Todo List */}
-      <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
+      <div className="flex-1 px-4 sm:px-6 pb-32 max-w-sm sm:max-w-md mx-auto w-full">
         {todos.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-gray-600 text-sm font-light leading-relaxed">
@@ -221,7 +233,7 @@ export default function MinimalistTodo() {
             {todos.map((todo) => (
               <div
                 key={todo.id}
-                className={`group flex items-center gap-3 p-4 rounded-lg transition-colors ${
+                className={`group flex items-center gap-3 p-3 sm:p-4 rounded-lg transition-colors ${
                   darkMode
                     ? 'bg-zinc-900 hover:bg-zinc-800'
                     : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
@@ -267,8 +279,8 @@ export default function MinimalistTodo() {
       </div>
 
       {/* Add Button / Input */}
-      <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 pointer-events-none">
-        <div className="max-w-md mx-auto pointer-events-auto">
+      <div className="fixed bottom-0 left-0 right-0 p-4 sm:p-6 pb-safe-bottom sm:pb-8 pointer-events-none">
+        <div className="max-w-sm sm:max-w-md mx-auto pointer-events-auto">
           {showInput ? (
             <div className={`rounded-full p-2 shadow-2xl overflow-hidden ${
               darkMode ? 'bg-zinc-900' : 'bg-white border border-gray-200'
@@ -314,7 +326,7 @@ export default function MinimalistTodo() {
             <div className="flex justify-center overflow-hidden relative">
               <div
                 ref={carouselRef}
-                className="relative w-28 h-16 flex items-center justify-center"
+                className="relative w-32 sm:w-28 h-20 sm:h-16 flex items-center justify-center"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >
@@ -331,7 +343,7 @@ export default function MinimalistTodo() {
                     handleButtonRelease();
                     handleTouchEnd(e);
                   }}
-                  className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
+                  className={`absolute w-20 h-20 sm:w-16 sm:h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
                     isRecording ? 'bg-gray-100' : ''
                   } ${carouselPosition === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
                   style={{
@@ -348,7 +360,7 @@ export default function MinimalistTodo() {
                 {/* Settings Button */}
                 <button
                   onClick={openSettings}
-                  className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
+                  className={`absolute w-20 h-20 sm:w-16 sm:h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
                     carouselPosition === 1 ? 'opacity-100 translate-x-0' : carouselPosition === 0 ? 'opacity-0 translate-x-[100%]' : 'opacity-0 translate-x-[-100%]'
                   }`}
                   style={{
@@ -361,7 +373,7 @@ export default function MinimalistTodo() {
                 {/* Insights Button */}
                 <button
                   onClick={openInsights}
-                  className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
+                  className={`absolute w-20 h-20 sm:w-16 sm:h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
                     carouselPosition === 2 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'
                   }`}
                   style={{
@@ -378,10 +390,10 @@ export default function MinimalistTodo() {
 
       {/* Settings Modal */}
       {showSettings && (
-        <div className={`fixed inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-sm ${
+        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 backdrop-blur-sm ${
           darkMode ? 'bg-black/50' : 'bg-black/30'
         }`}>
-          <div className={`rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl ${
+          <div className={`rounded-2xl p-4 sm:p-6 max-w-sm w-full mx-4 shadow-2xl ${
             darkMode ? 'bg-white' : 'bg-gray-900'
           }`}>
             <div className="text-center">
@@ -482,10 +494,10 @@ export default function MinimalistTodo() {
 
       {/* Insights Modal */}
       {showInsights && (
-        <div className={`fixed inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-sm ${
+        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 backdrop-blur-sm ${
           darkMode ? 'bg-black/50' : 'bg-black/30'
         }`}>
-          <div className={`rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl ${
+          <div className={`rounded-2xl p-4 sm:p-6 max-w-sm w-full mx-4 shadow-2xl ${
             darkMode ? 'bg-white' : 'bg-gray-900'
           }`}>
             <div className="text-center">
