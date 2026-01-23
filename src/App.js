@@ -7,11 +7,7 @@ export default function MinimalistTodo() {
   const [showInput, setShowInput] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [showAnalytics, setShowAnalytics] = useState(false);
-  const [carouselPosition, setCarouselPosition] = useState(0); // 0 = check button, 1 = settings, 2 = analytics
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isVoiceEnabled, setIsVoiceEnabled] = useState(true);
-  const [areNotificationsEnabled, setAreNotificationsEnabled] = useState(false);
+  const [carouselPosition, setCarouselPosition] = useState(0); // 0 = check button, 1 = settings
   const [recognition, setRecognition] = useState(null);
   const holdTimeoutRef = useRef(null);
   const touchStartRef = useRef(null);
@@ -156,18 +152,11 @@ export default function MinimalistTodo() {
     if (!touchStartRef.current) return;
 
     const touchEnd = e.changedTouches[0].clientX;
-    const deltaX = touchEnd - touchStartRef.current;
+    const deltaX = Math.abs(touchEnd - touchStartRef.current);
 
-    // Swipe right (positive delta) -> next position
-    // Swipe left (negative delta) -> previous position
-    if (Math.abs(deltaX) > 50) {
-      if (deltaX > 0) {
-        // Swipe right - next position
-        setCarouselPosition((carouselPosition + 1) % 3);
-      } else {
-        // Swipe left - previous position
-        setCarouselPosition((carouselPosition - 1 + 3) % 3);
-      }
+    // Any swipe with sufficient distance toggles between menus
+    if (deltaX > 50) {
+      setCarouselPosition(carouselPosition === 0 ? 1 : 0);
     }
 
     touchStartRef.current = null;
@@ -181,33 +170,13 @@ export default function MinimalistTodo() {
     setShowSettings(false);
   };
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
-
-  const toggleVoiceInput = () => {
-    setIsVoiceEnabled(!isVoiceEnabled);
-  };
-
-  const toggleNotifications = () => {
-    setAreNotificationsEnabled(!areNotificationsEnabled);
-  };
-
-  const openAnalytics = () => {
-    setShowAnalytics(true);
-  };
-
-  const closeAnalytics = () => {
-    setShowAnalytics(false);
-  };
-
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Todo List */}
       <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
         {todos.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-white text-base font-light leading-relaxed mt-4 opacity-70">
+            <p className="text-gray-600 text-sm font-light leading-relaxed">
               What are you getting done today?
             </p>
           </div>
@@ -291,7 +260,7 @@ export default function MinimalistTodo() {
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >
-                {/* Check Button - Position 0 */}
+                {/* Check Button */}
                 <button
                   onClick={handleButtonClick}
                   onMouseDown={handleButtonPress}
@@ -306,11 +275,7 @@ export default function MinimalistTodo() {
                   }}
                   className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
                     isRecording ? 'bg-gray-100' : ''
-                  } ${
-                    carouselPosition === 0 ? 'opacity-100 translate-x-0 z-20' :
-                    carouselPosition === 1 ? 'opacity-100 translate-x-[-100%] z-10' :
-                    'opacity-100 translate-x-[100%] z-10'
-                  }`}
+                  } ${carouselPosition === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
                   style={{
                     transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                   }}
@@ -322,37 +287,17 @@ export default function MinimalistTodo() {
                   )}
                 </button>
 
-                {/* Settings Button - Position 1 */}
+                {/* Settings Button */}
                 <button
                   onClick={openSettings}
                   className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
-                    carouselPosition === 1 ? 'opacity-100 translate-x-0 z-20' :
-                    carouselPosition === 2 ? 'opacity-100 translate-x-[-100%] z-10' :
-                    'opacity-100 translate-x-[100%] z-10'
+                    carouselPosition === 1 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'
                   }`}
                   style={{
                     transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                   }}
                 >
-                  <Settings size={28} strokeWidth={2} className="text-gray-900" />
-                </button>
-
-                {/* Analytics Button - Position 2 */}
-                <button
-                  onClick={openAnalytics}
-                  className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
-                    carouselPosition === 2 ? 'opacity-100 translate-x-0 z-20' :
-                    carouselPosition === 0 ? 'opacity-100 translate-x-[-100%] z-10' :
-                    'opacity-100 translate-x-[100%] z-10'
-                  }`}
-                  style={{
-                    transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-                  }}
-                >
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-900">
-                    <path d="M3 3V21H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M7 10L12 15L17 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                    <Settings size={28} strokeWidth={2} className="text-gray-900" />
                 </button>
               </div>
             </div>
@@ -374,32 +319,23 @@ export default function MinimalistTodo() {
               <div className="space-y-4 mb-6">
                 <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
                   <span className="text-sm text-gray-300">Dark Mode</span>
-                  <button
-                    onClick={toggleDarkMode}
-                    className={`w-10 h-6 rounded-full relative transition-colors ${isDarkMode ? 'bg-red-500' : 'bg-gray-600'}`}
-                  >
-                    <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${isDarkMode ? 'left-5' : 'left-0.5'}`}></div>
-                  </button>
+                  <div className="w-10 h-6 bg-gray-600 rounded-full relative">
+                    <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
                   <span className="text-sm text-gray-300">Voice Input</span>
-                  <button
-                    onClick={toggleVoiceInput}
-                    className={`w-10 h-6 rounded-full relative transition-colors ${isVoiceEnabled ? 'bg-red-500' : 'bg-gray-600'}`}
-                  >
-                    <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${isVoiceEnabled ? 'left-0.5' : 'left-5'}`}></div>
-                  </button>
+                  <div className="w-10 h-6 bg-red-500 rounded-full relative">
+                    <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5"></div>
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
                   <span className="text-sm text-gray-300">Notifications</span>
-                  <button
-                    onClick={toggleNotifications}
-                    className={`w-10 h-6 rounded-full relative transition-colors ${areNotificationsEnabled ? 'bg-red-500' : 'bg-gray-600'}`}
-                  >
-                    <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${areNotificationsEnabled ? 'left-0.5' : 'left-5'}`}></div>
-                  </button>
+                  <div className="w-10 h-6 bg-gray-600 rounded-full relative">
+                    <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                  </div>
                 </div>
               </div>
 
@@ -408,55 +344,6 @@ export default function MinimalistTodo() {
                 className="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-full transition-colors font-light"
               >
                 Close Settings
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Analytics Modal */}
-      {showAnalytics && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
-          <div className="bg-zinc-900 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-zinc-800">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-900">
-                  <path d="M3 3V21H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M7 10L12 15L17 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <h3 className="text-lg font-light text-white mb-4">Analytics</h3>
-
-              {/* Analytics data */}
-              <div className="space-y-4 mb-6">
-                <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
-                  <span className="text-sm text-gray-300">Total Tasks</span>
-                  <span className="text-sm font-semibold text-white">{todos.length}</span>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
-                  <span className="text-sm text-gray-300">Completed</span>
-                  <span className="text-sm font-semibold text-green-400">{todos.filter(t => t.completed).length}</span>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
-                  <span className="text-sm text-gray-300">Pending</span>
-                  <span className="text-sm font-semibold text-yellow-400">{todos.filter(t => !t.completed).length}</span>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
-                  <span className="text-sm text-gray-300">Completion Rate</span>
-                  <span className="text-sm font-semibold text-blue-400">
-                    {todos.length > 0 ? Math.round((todos.filter(t => t.completed).length / todos.length) * 100) : 0}%
-                  </span>
-                </div>
-              </div>
-
-              <button
-                onClick={closeAnalytics}
-                className="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-full transition-colors font-light"
-              >
-                Close Analytics
               </button>
             </div>
           </div>
