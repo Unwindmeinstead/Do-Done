@@ -338,25 +338,35 @@ export default function MinimalistTodo() {
               <h3 className="text-lg font-light text-black mb-4">Settings</h3>
 
               {/* Settings options */}
-              <div className="space-y-4 mb-6">
-                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                  <span className="text-sm text-black">Dark Mode</span>
-                  <div className="w-10 h-6 bg-gray-400 rounded-full relative">
-                    <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+              <div className="space-y-6 mb-6">
+                {/* Appearance Section */}
+                <div className="space-y-3">
+                  <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Appearance</h4>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <span className="text-sm text-black font-light">Dark Mode</span>
+                    <div className="w-10 h-6 bg-gray-400 rounded-full relative">
+                      <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                  <span className="text-sm text-black">Voice Input</span>
-                  <div className="w-10 h-6 bg-red-500 rounded-full relative">
-                    <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5"></div>
-                  </div>
-                </div>
+                {/* Features Section */}
+                <div className="space-y-3">
+                  <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Features</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <span className="text-sm text-black font-light">Voice Input</span>
+                      <div className="w-10 h-6 bg-red-500 rounded-full relative">
+                        <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5"></div>
+                      </div>
+                    </div>
 
-                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                  <span className="text-sm text-black">Notifications</span>
-                  <div className="w-10 h-6 bg-gray-400 rounded-full relative">
-                    <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <span className="text-sm text-black font-light">Notifications</span>
+                      <div className="w-10 h-6 bg-gray-400 rounded-full relative">
+                        <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -383,27 +393,41 @@ export default function MinimalistTodo() {
               <h3 className="text-lg font-light text-black mb-4">Insights</h3>
 
               {/* Insights content */}
-              <div className="space-y-4 mb-6">
-                <div className="p-3 bg-gray-100 rounded-lg">
-                  <div className="text-sm text-black mb-1">Tasks Completed Today</div>
-                  <div className="text-2xl font-light text-black">{todos.filter(t => t.completed).length}</div>
-                </div>
-
-                <div className="p-3 bg-gray-100 rounded-lg">
-                  <div className="text-sm text-black mb-1">Total Tasks</div>
-                  <div className="text-2xl font-light text-black">{todos.length}</div>
-                </div>
-
-                <div className="p-3 bg-gray-100 rounded-lg">
-                  <div className="text-sm text-black mb-1">Completion Rate</div>
-                  <div className="text-2xl font-light text-black">
-                    {todos.length > 0 ? Math.round((todos.filter(t => t.completed).length / todos.length) * 100) : 0}%
+              <div className="space-y-6 mb-6">
+                {/* Today's Progress Section */}
+                <div className="space-y-3">
+                  <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Today's Progress</h4>
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="text-sm text-black font-light mb-1">Tasks Completed Today</div>
+                    <div className="text-3xl font-light text-black">{todos.filter(t => t.completed).length}</div>
                   </div>
                 </div>
 
-                <div className="p-3 bg-gray-100 rounded-lg">
-                  <div className="text-sm text-black mb-1">Productivity Streak</div>
-                  <div className="text-2xl font-light text-black">🔥 3 days</div>
+                {/* Overall Stats Section */}
+                <div className="space-y-3">
+                  <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Overall Stats</h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="text-xs text-gray-600 font-light mb-1">Total Tasks</div>
+                      <div className="text-xl font-light text-black">{todos.length}</div>
+                    </div>
+
+                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="text-xs text-gray-600 font-light mb-1">Completion Rate</div>
+                      <div className="text-xl font-light text-black">
+                        {todos.length > 0 ? Math.round((todos.filter(t => t.completed).length / todos.length) * 100) : 0}%
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Streaks Section */}
+                <div className="space-y-3">
+                  <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Streaks</h4>
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="text-sm text-black font-light mb-1">Productivity Streak</div>
+                    <div className="text-2xl font-light text-black">🔥 3 days</div>
+                  </div>
                 </div>
               </div>
 
