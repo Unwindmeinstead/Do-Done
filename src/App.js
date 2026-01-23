@@ -1,3 +1,4 @@
+// Fake update test - testing git connection
 import React, { useState, useEffect, useRef } from 'react';
 import { Check, X, Mic, Settings, BarChart3 } from 'lucide-react';
 
