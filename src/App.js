@@ -1,96 +1,69 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Check, X, Mic, Settings, BarChart3 } from 'lucide-react';
+import { Check, X, Mic, Settings, BarChart3, Plus, Moon, Sun } from 'lucide-react';
 
-export default function MinimalistTodo() {
+export default function DoneApp() {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
   const [showInput, setShowInput] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showInsights, setShowInsights] = useState(false);
-  const [carouselPosition, setCarouselPosition] = useState(0); // 0 = check button, 1 = settings, 2 = insights
+  const [currentView, setCurrentView] = useState('todos');
   const [recognition, setRecognition] = useState(null);
   const [darkMode, setDarkMode] = useState(true);
   const [voiceInputEnabled, setVoiceInputEnabled] = useState(true);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const holdTimeoutRef = useRef(null);
-  const touchStartRef = useRef(null);
-  const carouselRef = useRef(null);
+  const inputRef = useRef(null);
 
+  // Load data on mount
   useEffect(() => {
-    const stored = localStorage.getItem('minimalist-todos');
-    if (stored) {
-      setTodos(JSON.parse(stored));
-    }
+    const storedTodos = localStorage.getItem('done-todos');
+    const storedSettings = localStorage.getItem('done-settings');
 
-    // Load settings
-    const storedSettings = localStorage.getItem('minimalist-settings');
+    if (storedTodos) setTodos(JSON.parse(storedTodos));
     if (storedSettings) {
       const settings = JSON.parse(storedSettings);
       setDarkMode(settings.darkMode ?? true);
       setVoiceInputEnabled(settings.voiceInputEnabled ?? true);
-      setNotificationsEnabled(settings.notificationsEnabled ?? false);
     }
   }, []);
 
+  // Save todos
   useEffect(() => {
-    localStorage.setItem('minimalist-todos', JSON.stringify(todos));
+    localStorage.setItem('done-todos', JSON.stringify(todos));
   }, [todos]);
 
+  // Save settings
   useEffect(() => {
-    const settings = {
-      darkMode,
-      voiceInputEnabled,
-      notificationsEnabled
-    };
-    localStorage.setItem('minimalist-settings', JSON.stringify(settings));
-  }, [darkMode, voiceInputEnabled, notificationsEnabled]);
+    const settings = { darkMode, voiceInputEnabled };
+    localStorage.setItem('done-settings', JSON.stringify(settings));
+  }, [darkMode, voiceInputEnabled]);
 
+  // Initialize voice recognition
   useEffect(() => {
     if (voiceInputEnabled && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognitionInstance = new SpeechRecognition();
-      recognitionInstance.continuous = true;
-      recognitionInstance.interimResults = true;
+      recognitionInstance.continuous = false;
+      recognitionInstance.interimResults = false;
       recognitionInstance.lang = 'en-US';
 
-      let finalTranscript = '';
-
       recognitionInstance.onresult = (event) => {
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalTranscript += transcript;
-          }
-        }
-
-        // Update with final results immediately
-        if (finalTranscript) {
-          setNewTodo(finalTranscript);
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          setNewTodo(transcript);
           setShowInput(true);
           setIsRecording(false);
-          recognitionInstance.stop();
         }
       };
 
-      recognitionInstance.onend = () => {
-        setIsRecording(false);
-      };
-
-      recognitionInstance.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        setIsRecording(false);
-      };
+      recognitionInstance.onend = () => setIsRecording(false);
+      recognitionInstance.onerror = () => setIsRecording(false);
 
       setRecognition(recognitionInstance);
-    } else {
-      setRecognition(null);
     }
   }, [voiceInputEnabled]);
 
   const addTodo = () => {
     if (newTodo.trim()) {
-      setTodos([...todos, { id: Date.now(), text: newTodo, completed: false }]);
+      setTodos([...todos, { id: Date.now(), text: newTodo.trim(), completed: false }]);
       setNewTodo('');
       setShowInput(false);
     }
@@ -106,107 +79,29 @@ export default function MinimalistTodo() {
     setTodos(todos.filter(todo => todo.id !== id));
   };
 
-  const playSoftSound = () => {
-    try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-
-      // Soft, soothing tone
-      oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4 note
-      oscillator.type = 'sine';
-
-      // Gentle fade in and out
-      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.5);
-    } catch (error) {
-      console.log('Audio not available');
-    }
-  };
-
   const startVoiceRecording = () => {
     if (recognition && !isRecording) {
       setIsRecording(true);
-      playSoftSound();
       recognition.start();
     }
   };
 
-  const stopVoiceRecording = () => {
-    if (recognition && isRecording) {
-      recognition.stop();
-    }
-  };
-
-  const handleButtonPress = () => {
+  const handleAddClick = () => {
     if (voiceInputEnabled) {
-      holdTimeoutRef.current = setTimeout(() => {
-        startVoiceRecording();
-      }, 500); // Start recording after 500ms hold
-    }
-  };
-
-  const handleButtonClick = () => {
-    // Only show input if not currently recording
-    if (!isRecording) {
+      startVoiceRecording();
+    } else {
       setShowInput(true);
     }
   };
 
-  const handleButtonRelease = () => {
-    if (holdTimeoutRef.current) {
-      clearTimeout(holdTimeoutRef.current);
-      holdTimeoutRef.current = null;
-      // Quick release - show input (handled by onClick)
-    } else if (isRecording) {
-      stopVoiceRecording();
-    }
-  };
-
-  const handleTouchStart = (e) => {
-    touchStartRef.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = (e) => {
-    if (!touchStartRef.current) return;
-
-    const touchEnd = e.changedTouches[0].clientX;
-    const deltaX = Math.abs(touchEnd - touchStartRef.current);
-
-    // Any swipe with sufficient distance cycles through menus
-    if (deltaX > 50) {
-      setCarouselPosition((carouselPosition + 1) % 3);
-    }
-
-    touchStartRef.current = null;
-  };
-
-  const openSettings = () => {
-    setShowSettings(true);
-  };
-
-  const closeSettings = () => {
-    setShowSettings(false);
-  };
-
-  const openInsights = () => {
-    setShowInsights(true);
-  };
-
-  const closeInsights = () => {
-    setShowInsights(false);
+  const handleInputSubmit = (e) => {
+    e.preventDefault();
+    addTodo();
   };
 
   return (
     <div
-      className={`flex flex-col transition-colors duration-300 overflow-hidden ${
+      className={`w-full h-full flex flex-col ${
         darkMode ? 'bg-black text-white' : 'bg-white text-black'
       }`}
       style={{
@@ -214,18 +109,190 @@ export default function MinimalistTodo() {
         top: 0,
         left: 0,
         right: 0,
-        bottom: 0,
-        width: '100vw',
-        height: '100vh',
-        minHeight: '100vh'
+        bottom: 0
       }}
     >
-      {/* Todo List */}
-      <div className="flex-1 px-4 sm:px-6 pb-32 max-w-sm sm:max-w-md mx-auto w-full">
-        {todos.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-gray-600 text-sm font-light leading-relaxed">
-              What are you getting done today?
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-800">
+        <h1 className="text-xl font-light">Done</h1>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setCurrentView(currentView === 'settings' ? 'todos' : 'settings')}
+            className={`p-2 rounded-full transition-colors ${
+              darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
+            }`}
+          >
+            <Settings size={20} />
+          </button>
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className={`p-2 rounded-full transition-colors ${
+              darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
+            }`}
+          >
+            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
+        {currentView === 'todos' && (
+          <div className="p-4">
+            {todos.length === 0 ? (
+              <div className="text-center py-20">
+                <p className={`text-sm font-light ${
+                  darkMode ? 'text-gray-400' : 'text-gray-600'
+                }`}>
+                  What are you getting done today?
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {todos.map((todo) => (
+                  <div
+                    key={todo.id}
+                    className={`flex items-center gap-3 p-4 rounded-xl transition-all ${
+                      darkMode ? 'bg-gray-900' : 'bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    <button
+                      onClick={() => toggleTodo(todo.id)}
+                      className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${
+                        todo.completed
+                          ? 'bg-green-500 border-green-500'
+                          : darkMode
+                            ? 'border-gray-600 hover:border-gray-400'
+                            : 'border-gray-400 hover:border-gray-600'
+                      }`}
+                    >
+                      {todo.completed && <Check size={16} strokeWidth={3} />}
+                    </button>
+                    <span
+                      className={`flex-1 text-base transition-all ${
+                        todo.completed
+                          ? 'line-through text-gray-500'
+                          : darkMode
+                            ? 'text-white'
+                            : 'text-gray-900'
+                      }`}
+                    >
+                      {todo.text}
+                    </span>
+                    <button
+                      onClick={() => deleteTodo(todo.id)}
+                      className={`p-1 rounded-full transition-colors ${
+                        darkMode ? 'hover:bg-gray-800 text-gray-500' : 'hover:bg-gray-200 text-gray-400'
+                      }`}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {currentView === 'settings' && (
+          <div className="p-4 space-y-6">
+            <div className="space-y-4">
+              <h2 className="text-lg font-light">Settings</h2>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className={`text-base ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    Voice Input
+                  </span>
+                  <button
+                    onClick={() => setVoiceInputEnabled(!voiceInputEnabled)}
+                    className={`w-12 h-6 rounded-full transition-colors ${
+                      voiceInputEnabled ? 'bg-blue-500' : 'bg-gray-400'
+                    }`}
+                  >
+                    <div
+                      className={`w-5 h-5 bg-white rounded-full transition-transform ${
+                        voiceInputEnabled ? 'translate-x-6' : 'translate-x-0.5'
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Add Button */}
+      <div className="p-4 border-t border-gray-800">
+        {!showInput ? (
+          <button
+            onClick={handleAddClick}
+            className={`w-full h-14 rounded-xl flex items-center justify-center gap-3 font-medium transition-all ${
+              darkMode
+                ? 'bg-white text-black hover:bg-gray-200'
+                : 'bg-black text-white hover:bg-gray-800'
+            } ${isRecording ? 'animate-pulse' : ''}`}
+          >
+            {isRecording ? (
+              <>
+                <Mic size={20} />
+                Listening...
+              </>
+            ) : (
+              <>
+                <Plus size={20} />
+                Add Task
+              </>
+            )}
+          </button>
+        ) : (
+          <form onSubmit={handleInputSubmit} className="space-y-3">
+            <input
+              ref={inputRef}
+              type="text"
+              value={newTodo}
+              onChange={(e) => setNewTodo(e.target.value)}
+              placeholder="What needs to be done?"
+              className={`w-full h-14 px-4 rounded-xl text-base transition-colors ${
+                darkMode
+                  ? 'bg-gray-900 border border-gray-700 text-white placeholder-gray-500'
+                  : 'bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-400'
+              }`}
+              autoFocus
+            />
+            <div className="flex gap-3">
+              <button
+                type="submit"
+                className={`flex-1 h-12 rounded-xl font-medium transition-colors ${
+                  darkMode
+                    ? 'bg-white text-black hover:bg-gray-200'
+                    : 'bg-black text-white hover:bg-gray-800'
+                }`}
+              >
+                Add Task
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowInput(false);
+                  setNewTodo('');
+                }}
+                className={`px-6 h-12 rounded-xl font-medium transition-colors ${
+                  darkMode
+                    ? 'bg-gray-800 text-white hover:bg-gray-700'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
             </p>
           </div>
         ) : (
