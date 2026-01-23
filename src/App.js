@@ -330,7 +330,7 @@ export default function MinimalistTodo() {
       {/* Settings Modal */}
       {showSettings && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
-          <div className="bg-zinc-900 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-zinc-800">
+          <div className="bg-black rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-white/10">
             <div className="text-center">
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
                 <Settings size={32} strokeWidth={2} className="text-gray-900" />
@@ -339,31 +339,31 @@ export default function MinimalistTodo() {
 
               {/* Settings options */}
               <div className="space-y-4 mb-6">
-                <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
-                  <span className="text-sm text-gray-300">Dark Mode</span>
-                  <div className="w-10 h-6 bg-gray-600 rounded-full relative">
-                    <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                <div className="flex items-center justify-between p-3 bg-white rounded-lg">
+                  <span className="text-sm text-black">Dark Mode</span>
+                  <div className="w-10 h-6 bg-gray-300 rounded-full relative">
+                    <div className="w-5 h-5 bg-black rounded-full absolute right-0.5 top-0.5"></div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
-                  <span className="text-sm text-gray-300">Voice Input</span>
+                <div className="flex items-center justify-between p-3 bg-white rounded-lg">
+                  <span className="text-sm text-black">Voice Input</span>
                   <div className="w-10 h-6 bg-red-500 rounded-full relative">
                     <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5"></div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
-                  <span className="text-sm text-gray-300">Notifications</span>
-                  <div className="w-10 h-6 bg-gray-600 rounded-full relative">
-                    <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                <div className="flex items-center justify-between p-3 bg-white rounded-lg">
+                  <span className="text-sm text-black">Notifications</span>
+                  <div className="w-10 h-6 bg-gray-300 rounded-full relative">
+                    <div className="w-5 h-5 bg-black rounded-full absolute right-0.5 top-0.5"></div>
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={closeSettings}
-                className="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-full transition-colors font-light"
+                className="w-full bg-white hover:bg-gray-50 text-black py-3 px-4 rounded-full transition-colors font-light"
               >
                 Close Settings
               </button>
@@ -375,7 +375,7 @@ export default function MinimalistTodo() {
       {/* Insights Modal */}
       {showInsights && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
-          <div className="bg-zinc-900 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-zinc-800">
+          <div className="bg-black rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-white/10">
             <div className="text-center">
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
                 <BarChart3 size={32} strokeWidth={2} className="text-gray-900" />
@@ -384,32 +384,32 @@ export default function MinimalistTodo() {
 
               {/* Insights content */}
               <div className="space-y-4 mb-6">
-                <div className="p-3 bg-zinc-800 rounded-lg">
-                  <div className="text-sm text-gray-300 mb-1">Tasks Completed Today</div>
-                  <div className="text-2xl font-light text-white">{todos.filter(t => t.completed).length}</div>
+                <div className="p-3 bg-white rounded-lg">
+                  <div className="text-sm text-black mb-1">Tasks Completed Today</div>
+                  <div className="text-2xl font-light text-black">{todos.filter(t => t.completed).length}</div>
                 </div>
 
-                <div className="p-3 bg-zinc-800 rounded-lg">
-                  <div className="text-sm text-gray-300 mb-1">Total Tasks</div>
-                  <div className="text-2xl font-light text-white">{todos.length}</div>
+                <div className="p-3 bg-white rounded-lg">
+                  <div className="text-sm text-black mb-1">Total Tasks</div>
+                  <div className="text-2xl font-light text-black">{todos.length}</div>
                 </div>
 
-                <div className="p-3 bg-zinc-800 rounded-lg">
-                  <div className="text-sm text-gray-300 mb-1">Completion Rate</div>
-                  <div className="text-2xl font-light text-white">
+                <div className="p-3 bg-white rounded-lg">
+                  <div className="text-sm text-black mb-1">Completion Rate</div>
+                  <div className="text-2xl font-light text-black">
                     {todos.length > 0 ? Math.round((todos.filter(t => t.completed).length / todos.length) * 100) : 0}%
                   </div>
                 </div>
 
-                <div className="p-3 bg-zinc-800 rounded-lg">
-                  <div className="text-sm text-gray-300 mb-1">Productivity Streak</div>
-                  <div className="text-2xl font-light text-white">🔥 3 days</div>
+                <div className="p-3 bg-white rounded-lg">
+                  <div className="text-sm text-black mb-1">Productivity Streak</div>
+                  <div className="text-2xl font-light text-black">🔥 3 days</div>
                 </div>
               </div>
 
               <button
                 onClick={closeInsights}
-                className="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-full transition-colors font-light"
+                className="w-full bg-white hover:bg-gray-50 text-black py-3 px-4 rounded-full transition-colors font-light"
               >
                 Close Insights
               </button>
