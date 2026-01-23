@@ -156,11 +156,18 @@ export default function MinimalistTodo() {
     if (!touchStartRef.current) return;
 
     const touchEnd = e.changedTouches[0].clientX;
-    const deltaX = Math.abs(touchEnd - touchStartRef.current);
+    const deltaX = touchEnd - touchStartRef.current;
 
-    // Any swipe with sufficient distance cycles through menus
-    if (deltaX > 50) {
-      setCarouselPosition((carouselPosition + 1) % 3);
+    // Swipe right (positive delta) -> next position
+    // Swipe left (negative delta) -> previous position
+    if (Math.abs(deltaX) > 50) {
+      if (deltaX > 0) {
+        // Swipe right - next position
+        setCarouselPosition((carouselPosition + 1) % 3);
+      } else {
+        // Swipe left - previous position
+        setCarouselPosition((carouselPosition - 1 + 3) % 3);
+      }
     }
 
     touchStartRef.current = null;
@@ -299,7 +306,11 @@ export default function MinimalistTodo() {
                   }}
                   className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
                     isRecording ? 'bg-gray-100' : ''
-                  } ${carouselPosition === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
+                  } ${
+                    carouselPosition === 0 ? 'opacity-100 translate-x-0 z-10' :
+                    carouselPosition === 1 ? 'opacity-0 translate-x-[-100%]' :
+                    'opacity-0 translate-x-[100%]'
+                  }`}
                   style={{
                     transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                   }}
@@ -315,7 +326,9 @@ export default function MinimalistTodo() {
                 <button
                   onClick={openSettings}
                   className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
-                    carouselPosition === 1 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'
+                    carouselPosition === 1 ? 'opacity-100 translate-x-0 z-10' :
+                    carouselPosition === 2 ? 'opacity-0 translate-x-[-100%]' :
+                    'opacity-0 translate-x-[100%]'
                   }`}
                   style={{
                     transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
@@ -328,7 +341,9 @@ export default function MinimalistTodo() {
                 <button
                   onClick={openAnalytics}
                   className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
-                    carouselPosition === 2 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'
+                    carouselPosition === 2 ? 'opacity-100 translate-x-0 z-10' :
+                    carouselPosition === 0 ? 'opacity-0 translate-x-[-100%]' :
+                    'opacity-0 translate-x-[100%]'
                   }`}
                   style={{
                     transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
