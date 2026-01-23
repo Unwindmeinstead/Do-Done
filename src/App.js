@@ -7,7 +7,10 @@ export default function MinimalistTodo() {
   const [showInput, setShowInput] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [carouselPosition, setCarouselPosition] = useState(0); // 0 = check button, 1 = settings
+  const [carouselPosition, setCarouselPosition] = useState(0); // 0 = check button, 1 = settings, 2 = analytics
+  const [darkMode, setDarkMode] = useState(false);
+  const [voiceInputEnabled, setVoiceInputEnabled] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [recognition, setRecognition] = useState(null);
   const holdTimeoutRef = useRef(null);
   const touchStartRef = useRef(null);
@@ -73,9 +76,18 @@ export default function MinimalistTodo() {
   };
 
   const toggleTodo = (id) => {
-    setTodos(todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
+    setTodos(todos.map(todo => {
+      if (todo.id === id) {
+        const wasCompleted = todo.completed;
+        const updatedTodo = { ...todo, completed: !todo.completed };
+        if (!wasCompleted && updatedTodo.completed) {
+          // Show notification when marking as complete
+          setTimeout(() => showNotification('Task Completed!', `Great job on: ${todo.text}`), 100);
+        }
+        return updatedTodo;
+      }
+      return todo;
+    }));
   };
 
   const deleteTodo = (id) => {
@@ -108,7 +120,7 @@ export default function MinimalistTodo() {
   };
 
   const startVoiceRecording = () => {
-    if (recognition && !isRecording) {
+    if (recognition && !isRecording && voiceInputEnabled) {
       setIsRecording(true);
       playSoftSound();
       recognition.start();
@@ -154,9 +166,9 @@ export default function MinimalistTodo() {
     const touchEnd = e.changedTouches[0].clientX;
     const deltaX = Math.abs(touchEnd - touchStartRef.current);
 
-    // Any swipe with sufficient distance toggles between menus
+    // Any swipe with sufficient distance cycles through menus
     if (deltaX > 50) {
-      setCarouselPosition(carouselPosition === 0 ? 1 : 0);
+      setCarouselPosition((carouselPosition + 1) % 3);
     }
 
     touchStartRef.current = null;
@@ -170,8 +182,25 @@ export default function MinimalistTodo() {
     setShowSettings(false);
   };
 
+  const requestNotificationPermission = async () => {
+    if ('Notification' in window) {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        setNotificationsEnabled(true);
+      } else {
+        setNotificationsEnabled(false);
+      }
+    }
+  };
+
+  const showNotification = (title, body) => {
+    if (notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, { body, icon: '/favicon.ico' });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className={`min-h-screen flex flex-col ${darkMode ? 'bg-black text-white' : 'bg-white text-gray-900'}`}>
       {/* Todo List */}
       <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
         {todos.length === 0 ? (
@@ -291,13 +320,29 @@ export default function MinimalistTodo() {
                 <button
                   onClick={openSettings}
                   className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
-                    carouselPosition === 1 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'
+                    carouselPosition === 1 ? 'opacity-100 translate-x-0' : carouselPosition === 0 ? 'opacity-0 translate-x-[100%]' : 'opacity-0 translate-x-[-100%]'
                   }`}
                   style={{
                     transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                   }}
                 >
                     <Settings size={28} strokeWidth={2} className="text-gray-900" />
+                </button>
+
+                {/* Analytics Button */}
+                <button
+                  onClick={() => setShowSettings(true)}
+                  className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
+                    carouselPosition === 2 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'
+                  }`}
+                  style={{
+                    transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                  }}
+                >
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-900">
+                    <path d="M3 3v18h18"/>
+                    <path d="M18.5 9.5L12 16l-3-3L6.5 12.5"/>
+                  </svg>
                 </button>
               </div>
             </div>
@@ -308,40 +353,55 @@ export default function MinimalistTodo() {
       {/* Settings Modal */}
       {showSettings && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
-          <div className="bg-zinc-900 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-zinc-800">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-gray-200">
             <div className="text-center">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Settings size={32} strokeWidth={2} className="text-gray-900" />
               </div>
-              <h3 className="text-lg font-light text-white mb-4">Settings</h3>
+              <h3 className="text-lg font-light text-gray-900 mb-4">Settings</h3>
 
               {/* Settings options */}
               <div className="space-y-4 mb-6">
-                <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
-                  <span className="text-sm text-gray-300">Dark Mode</span>
-                  <div className="w-10 h-6 bg-gray-600 rounded-full relative">
-                    <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
-                  </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <span className="text-sm text-gray-700">Dark Mode</span>
+                  <button
+                    onClick={() => setDarkMode(!darkMode)}
+                    className={`w-10 h-6 rounded-full relative transition-colors ${darkMode ? 'bg-gray-900' : 'bg-gray-300'}`}
+                  >
+                    <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${darkMode ? 'translate-x-5' : 'translate-x-0.5'}`}></div>
+                  </button>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
-                  <span className="text-sm text-gray-300">Voice Input</span>
-                  <div className="w-10 h-6 bg-red-500 rounded-full relative">
-                    <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5"></div>
-                  </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <span className="text-sm text-gray-700">Voice Input</span>
+                  <button
+                    onClick={() => setVoiceInputEnabled(!voiceInputEnabled)}
+                    className={`w-10 h-6 rounded-full relative transition-colors ${voiceInputEnabled ? 'bg-red-500' : 'bg-gray-300'}`}
+                  >
+                    <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${voiceInputEnabled ? 'translate-x-5' : 'translate-x-0.5'}`}></div>
+                  </button>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-zinc-800 rounded-lg">
-                  <span className="text-sm text-gray-300">Notifications</span>
-                  <div className="w-10 h-6 bg-gray-600 rounded-full relative">
-                    <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
-                  </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <span className="text-sm text-gray-700">Notifications</span>
+                  <button
+                    onClick={async () => {
+                      if (!notificationsEnabled) {
+                        await requestNotificationPermission();
+                      } else {
+                        setNotificationsEnabled(false);
+                      }
+                    }}
+                    className={`w-10 h-6 rounded-full relative transition-colors ${notificationsEnabled ? 'bg-gray-900' : 'bg-gray-300'}`}
+                  >
+                    <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${notificationsEnabled ? 'translate-x-5' : 'translate-x-0.5'}`}></div>
+                  </button>
                 </div>
               </div>
 
               <button
                 onClick={closeSettings}
-                className="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-full transition-colors font-light"
+                className="w-full bg-gray-900 hover:bg-gray-800 text-white py-3 px-4 rounded-full transition-colors font-light"
               >
                 Close Settings
               </button>
