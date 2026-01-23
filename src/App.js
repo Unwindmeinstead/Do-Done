@@ -171,17 +171,17 @@ export default function MinimalistTodo() {
   };
 
   return (
-    <div className="h-screen bg-black text-white flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-black text-white flex flex-col font-['Poppins']">
       {/* Todo List */}
-      <div className="flex-1 px-6 max-w-md mx-auto w-full overflow-hidden">
+      <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
         {todos.length === 0 ? (
-          <div className="text-center h-full flex items-center justify-center">
-            <p className="text-gray-200 text-base font-light leading-relaxed">
+          <div className="text-center py-24">
+            <p className="text-white/60 text-lg font-light leading-relaxed">
               What are you getting done today?
             </p>
           </div>
         ) : (
-          <div className="space-y-2 pt-20 h-full overflow-y-auto">
+          <div className="space-y-2 pt-20">
             {todos.map((todo) => (
               <div
                 key={todo.id}
