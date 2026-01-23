@@ -10,6 +10,9 @@ export default function MinimalistTodo() {
   const [showInsights, setShowInsights] = useState(false);
   const [carouselPosition, setCarouselPosition] = useState(0); // 0 = check button, 1 = settings, 2 = insights
   const [recognition, setRecognition] = useState(null);
+  const [darkMode, setDarkMode] = useState(true);
+  const [voiceInputEnabled, setVoiceInputEnabled] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const holdTimeoutRef = useRef(null);
   const touchStartRef = useRef(null);
   const carouselRef = useRef(null);
@@ -19,6 +22,15 @@ export default function MinimalistTodo() {
     if (stored) {
       setTodos(JSON.parse(stored));
     }
+
+    // Load settings
+    const storedSettings = localStorage.getItem('minimalist-settings');
+    if (storedSettings) {
+      const settings = JSON.parse(storedSettings);
+      setDarkMode(settings.darkMode ?? true);
+      setVoiceInputEnabled(settings.voiceInputEnabled ?? true);
+      setNotificationsEnabled(settings.notificationsEnabled ?? false);
+    }
   }, []);
 
   useEffect(() => {
@@ -26,7 +38,16 @@ export default function MinimalistTodo() {
   }, [todos]);
 
   useEffect(() => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const settings = {
+      darkMode,
+      voiceInputEnabled,
+      notificationsEnabled
+    };
+    localStorage.setItem('minimalist-settings', JSON.stringify(settings));
+  }, [darkMode, voiceInputEnabled, notificationsEnabled]);
+
+  useEffect(() => {
+    if (voiceInputEnabled && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognitionInstance = new SpeechRecognition();
       recognitionInstance.continuous = true;
@@ -62,8 +83,10 @@ export default function MinimalistTodo() {
       };
 
       setRecognition(recognitionInstance);
+    } else {
+      setRecognition(null);
     }
-  }, []);
+  }, [voiceInputEnabled]);
 
   const addTodo = () => {
     if (newTodo.trim()) {
@@ -123,9 +146,11 @@ export default function MinimalistTodo() {
   };
 
   const handleButtonPress = () => {
-    holdTimeoutRef.current = setTimeout(() => {
-      startVoiceRecording();
-    }, 500); // Start recording after 500ms hold
+    if (voiceInputEnabled) {
+      holdTimeoutRef.current = setTimeout(() => {
+        startVoiceRecording();
+      }, 500); // Start recording after 500ms hold
+    }
   };
 
   const handleButtonClick = () => {
@@ -180,7 +205,9 @@ export default function MinimalistTodo() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${
+      darkMode ? 'bg-black text-white' : 'bg-white text-black'
+    }`}>
       {/* Todo List */}
       <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
         {todos.length === 0 ? (
@@ -194,14 +221,20 @@ export default function MinimalistTodo() {
             {todos.map((todo) => (
               <div
                 key={todo.id}
-                className="group flex items-center gap-3 p-4 rounded-lg bg-zinc-900 hover:bg-zinc-800 transition-colors"
+                className={`group flex items-center gap-3 p-4 rounded-lg transition-colors ${
+                  darkMode
+                    ? 'bg-zinc-900 hover:bg-zinc-800'
+                    : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
+                }`}
               >
                 <button
                   onClick={() => toggleTodo(todo.id)}
                   className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                     todo.completed
                       ? 'bg-emerald-500 border-emerald-500'
-                      : 'border-gray-600 hover:border-gray-400'
+                      : darkMode
+                        ? 'border-gray-600 hover:border-gray-400'
+                        : 'border-gray-400 hover:border-gray-600'
                   }`}
                 >
                   {todo.completed && <Check size={14} strokeWidth={3} />}
@@ -210,14 +243,20 @@ export default function MinimalistTodo() {
                   className={`flex-1 text-sm font-light transition-all ${
                     todo.completed
                       ? 'line-through text-gray-600'
-                      : 'text-gray-200'
+                      : darkMode
+                        ? 'text-gray-200'
+                        : 'text-gray-800'
                   }`}
                 >
                   {todo.text}
                 </span>
                 <button
                   onClick={() => deleteTodo(todo.id)}
-                  className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 transition-all"
+                  className={`opacity-0 group-hover:opacity-100 transition-all ${
+                    darkMode
+                      ? 'text-gray-600 hover:text-red-400'
+                      : 'text-gray-500 hover:text-red-500'
+                  }`}
                 >
                   <X size={16} />
                 </button>
@@ -231,7 +270,9 @@ export default function MinimalistTodo() {
       <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 pointer-events-none">
         <div className="max-w-md mx-auto pointer-events-auto">
           {showInput ? (
-            <div className="bg-zinc-900 rounded-full p-2 shadow-2xl overflow-hidden">
+            <div className={`rounded-full p-2 shadow-2xl overflow-hidden ${
+              darkMode ? 'bg-zinc-900' : 'bg-white border border-gray-200'
+            }`}>
               <div className="flex items-center">
                 <input
                   type="text"
@@ -239,7 +280,11 @@ export default function MinimalistTodo() {
                   onChange={(e) => setNewTodo(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addTodo()}
                   placeholder="Add a priority..."
-                  className="flex-1 bg-transparent px-4 py-2 text-sm focus:outline-none text-white placeholder-gray-600 min-w-0"
+                  className={`flex-1 bg-transparent px-4 py-2 text-sm focus:outline-none min-w-0 ${
+                    darkMode
+                      ? 'text-white placeholder-gray-600'
+                      : 'text-black placeholder-gray-500'
+                  }`}
                   autoFocus
                 />
                 <div className="flex items-center gap-1 ml-2 flex-shrink-0">
@@ -254,7 +299,11 @@ export default function MinimalistTodo() {
                       setShowInput(false);
                       setNewTodo('');
                     }}
-                    className="w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center transition-colors"
+                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                      darkMode
+                        ? 'bg-zinc-800 hover:bg-zinc-700'
+                        : 'bg-gray-200 hover:bg-gray-300'
+                    }`}
                   >
                     <X size={18} />
                   </button>
@@ -329,42 +378,87 @@ export default function MinimalistTodo() {
 
       {/* Settings Modal */}
       {showSettings && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+        <div className={`fixed inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-sm ${
+          darkMode ? 'bg-black/50' : 'bg-black/30'
+        }`}>
+          <div className={`rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl ${
+            darkMode ? 'bg-white' : 'bg-gray-900'
+          }`}>
             <div className="text-center">
-              <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
-                <Settings size={32} strokeWidth={2} className="text-white" />
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
+                darkMode ? 'bg-black' : 'bg-white'
+              }`}>
+                <Settings size={32} strokeWidth={2} className={darkMode ? 'text-white' : 'text-black'} />
               </div>
-              <h3 className="text-lg font-light text-black mb-4">Settings</h3>
+              <h3 className={`text-lg font-light mb-4 ${
+                darkMode ? 'text-black' : 'text-white'
+              }`}>Settings</h3>
 
               {/* Settings options */}
               <div className="space-y-6 mb-6">
                 {/* Appearance Section */}
                 <div className="space-y-3">
-                  <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Appearance</h4>
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <span className="text-sm text-black font-light">Dark Mode</span>
-                    <div className="w-10 h-6 bg-gray-400 rounded-full relative">
-                      <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                  <h4 className={`text-xs font-medium uppercase tracking-wider ${
+                    darkMode ? 'text-gray-500' : 'text-gray-400'
+                  }`}>Appearance</h4>
+                  <div
+                    className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
+                      darkMode ? 'bg-gray-50 border-gray-200' : 'bg-gray-800 border-gray-700'
+                    }`}
+                    onClick={() => setDarkMode(!darkMode)}
+                  >
+                    <span className={`text-sm font-light ${
+                      darkMode ? 'text-black' : 'text-white'
+                    }`}>Dark Mode</span>
+                    <div className={`w-10 h-6 rounded-full relative transition-colors ${
+                      darkMode ? 'bg-blue-500' : 'bg-gray-600'
+                    }`}>
+                      <div className={`w-5 h-5 bg-white rounded-full absolute transition-all duration-200 ${
+                        darkMode ? 'right-0.5' : 'left-0.5'
+                      } top-0.5`}></div>
                     </div>
                   </div>
                 </div>
 
                 {/* Features Section */}
                 <div className="space-y-3">
-                  <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Features</h4>
+                  <h4 className={`text-xs font-medium uppercase tracking-wider ${
+                    darkMode ? 'text-gray-500' : 'text-gray-400'
+                  }`}>Features</h4>
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                      <span className="text-sm text-black font-light">Voice Input</span>
-                      <div className="w-10 h-6 bg-red-500 rounded-full relative">
-                        <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5"></div>
+                    <div
+                      className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
+                        darkMode ? 'bg-gray-50 border-gray-200' : 'bg-gray-800 border-gray-700'
+                      }`}
+                      onClick={() => setVoiceInputEnabled(!voiceInputEnabled)}
+                    >
+                      <span className={`text-sm font-light ${
+                        darkMode ? 'text-black' : 'text-white'
+                      }`}>Voice Input</span>
+                      <div className={`w-10 h-6 rounded-full relative transition-colors ${
+                        voiceInputEnabled ? 'bg-red-500' : 'bg-gray-400'
+                      }`}>
+                        <div className={`w-5 h-5 bg-white rounded-full absolute transition-all duration-200 ${
+                          voiceInputEnabled ? 'left-0.5' : 'right-0.5'
+                        } top-0.5`}></div>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                      <span className="text-sm text-black font-light">Notifications</span>
-                      <div className="w-10 h-6 bg-gray-400 rounded-full relative">
-                        <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                    <div
+                      className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
+                        darkMode ? 'bg-gray-50 border-gray-200' : 'bg-gray-800 border-gray-700'
+                      }`}
+                      onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                    >
+                      <span className={`text-sm font-light ${
+                        darkMode ? 'text-black' : 'text-white'
+                      }`}>Notifications</span>
+                      <div className={`w-10 h-6 rounded-full relative transition-colors ${
+                        notificationsEnabled ? 'bg-green-500' : 'bg-gray-400'
+                      }`}>
+                        <div className={`w-5 h-5 bg-white rounded-full absolute transition-all duration-200 ${
+                          notificationsEnabled ? 'left-0.5' : 'right-0.5'
+                        } top-0.5`}></div>
                       </div>
                     </div>
                   </div>
@@ -373,7 +467,11 @@ export default function MinimalistTodo() {
 
               <button
                 onClick={closeSettings}
-                className="w-full bg-black hover:bg-gray-800 text-white py-3 px-4 rounded-full transition-colors font-light"
+                className={`w-full py-3 px-4 rounded-full transition-colors font-light ${
+                  darkMode
+                    ? 'bg-black hover:bg-gray-800 text-white'
+                    : 'bg-white hover:bg-gray-100 text-black border border-gray-300'
+                }`}
               >
                 Close Settings
               </button>
@@ -384,37 +482,67 @@ export default function MinimalistTodo() {
 
       {/* Insights Modal */}
       {showInsights && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+        <div className={`fixed inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-sm ${
+          darkMode ? 'bg-black/50' : 'bg-black/30'
+        }`}>
+          <div className={`rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl ${
+            darkMode ? 'bg-white' : 'bg-gray-900'
+          }`}>
             <div className="text-center">
-              <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
-                <BarChart3 size={32} strokeWidth={2} className="text-white" />
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
+                darkMode ? 'bg-black' : 'bg-white'
+              }`}>
+                <BarChart3 size={32} strokeWidth={2} className={darkMode ? 'text-white' : 'text-black'} />
               </div>
-              <h3 className="text-lg font-light text-black mb-4">Insights</h3>
+              <h3 className={`text-lg font-light mb-4 ${
+                darkMode ? 'text-black' : 'text-white'
+              }`}>Insights</h3>
 
               {/* Insights content */}
               <div className="space-y-6 mb-6">
                 {/* Today's Progress Section */}
                 <div className="space-y-3">
-                  <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Today's Progress</h4>
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="text-sm text-black font-light mb-1">Tasks Completed Today</div>
-                    <div className="text-3xl font-light text-black">{todos.filter(t => t.completed).length}</div>
+                  <h4 className={`text-xs font-medium uppercase tracking-wider ${
+                    darkMode ? 'text-gray-500' : 'text-gray-400'
+                  }`}>Today's Progress</h4>
+                  <div className={`p-4 rounded-lg border ${
+                    darkMode ? 'bg-gray-50 border-gray-200' : 'bg-gray-800 border-gray-700'
+                  }`}>
+                    <div className={`text-sm font-light mb-1 ${
+                      darkMode ? 'text-black' : 'text-white'
+                    }`}>Tasks Completed Today</div>
+                    <div className={`text-3xl font-light ${
+                      darkMode ? 'text-black' : 'text-white'
+                    }`}>{todos.filter(t => t.completed).length}</div>
                   </div>
                 </div>
 
                 {/* Overall Stats Section */}
                 <div className="space-y-3">
-                  <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Overall Stats</h4>
+                  <h4 className={`text-xs font-medium uppercase tracking-wider ${
+                    darkMode ? 'text-gray-500' : 'text-gray-400'
+                  }`}>Overall Stats</h4>
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                      <div className="text-xs text-gray-600 font-light mb-1">Total Tasks</div>
-                      <div className="text-xl font-light text-black">{todos.length}</div>
+                    <div className={`p-4 rounded-lg border ${
+                      darkMode ? 'bg-gray-50 border-gray-200' : 'bg-gray-800 border-gray-700'
+                    }`}>
+                      <div className={`text-xs font-light mb-1 ${
+                        darkMode ? 'text-gray-600' : 'text-gray-400'
+                      }`}>Total Tasks</div>
+                      <div className={`text-xl font-light ${
+                        darkMode ? 'text-black' : 'text-white'
+                      }`}>{todos.length}</div>
                     </div>
 
-                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                      <div className="text-xs text-gray-600 font-light mb-1">Completion Rate</div>
-                      <div className="text-xl font-light text-black">
+                    <div className={`p-4 rounded-lg border ${
+                      darkMode ? 'bg-gray-50 border-gray-200' : 'bg-gray-800 border-gray-700'
+                    }`}>
+                      <div className={`text-xs font-light mb-1 ${
+                        darkMode ? 'text-gray-600' : 'text-gray-400'
+                      }`}>Completion Rate</div>
+                      <div className={`text-xl font-light ${
+                        darkMode ? 'text-black' : 'text-white'
+                      }`}>
                         {todos.length > 0 ? Math.round((todos.filter(t => t.completed).length / todos.length) * 100) : 0}%
                       </div>
                     </div>
@@ -423,17 +551,29 @@ export default function MinimalistTodo() {
 
                 {/* Streaks Section */}
                 <div className="space-y-3">
-                  <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Streaks</h4>
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="text-sm text-black font-light mb-1">Productivity Streak</div>
-                    <div className="text-2xl font-light text-black">🔥 3 days</div>
+                  <h4 className={`text-xs font-medium uppercase tracking-wider ${
+                    darkMode ? 'text-gray-500' : 'text-gray-400'
+                  }`}>Streaks</h4>
+                  <div className={`p-4 rounded-lg border ${
+                    darkMode ? 'bg-gray-50 border-gray-200' : 'bg-gray-800 border-gray-700'
+                  }`}>
+                    <div className={`text-sm font-light mb-1 ${
+                      darkMode ? 'text-black' : 'text-white'
+                    }`}>Productivity Streak</div>
+                    <div className={`text-2xl font-light ${
+                      darkMode ? 'text-black' : 'text-white'
+                    }`}>🔥 3 days</div>
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={closeInsights}
-                className="w-full bg-black hover:bg-gray-800 text-white py-3 px-4 rounded-full transition-colors font-light"
+                className={`w-full py-3 px-4 rounded-full transition-colors font-light ${
+                  darkMode
+                    ? 'bg-black hover:bg-gray-800 text-white'
+                    : 'bg-white hover:bg-gray-100 text-black border border-gray-300'
+                }`}
               >
                 Close Insights
               </button>
