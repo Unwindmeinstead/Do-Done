@@ -291,7 +291,7 @@ export default function MinimalistTodo() {
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >
-                {/* Check Button */}
+                {/* Check Button - Position 0 */}
                 <button
                   onClick={handleButtonClick}
                   onMouseDown={handleButtonPress}
@@ -307,9 +307,9 @@ export default function MinimalistTodo() {
                   className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
                     isRecording ? 'bg-gray-100' : ''
                   } ${
-                    carouselPosition === 0 ? 'opacity-100 translate-x-0 z-10' :
-                    carouselPosition === 1 ? 'opacity-0 translate-x-[-100%]' :
-                    'opacity-0 translate-x-[100%]'
+                    carouselPosition === 0 ? 'opacity-100 translate-x-0 z-20' :
+                    carouselPosition === 1 ? 'opacity-100 translate-x-[-100%] z-10' :
+                    'opacity-100 translate-x-[100%] z-10'
                   }`}
                   style={{
                     transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
@@ -322,13 +322,13 @@ export default function MinimalistTodo() {
                   )}
                 </button>
 
-                {/* Settings Button */}
+                {/* Settings Button - Position 1 */}
                 <button
                   onClick={openSettings}
                   className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
-                    carouselPosition === 1 ? 'opacity-100 translate-x-0 z-10' :
-                    carouselPosition === 2 ? 'opacity-0 translate-x-[-100%]' :
-                    'opacity-0 translate-x-[100%]'
+                    carouselPosition === 1 ? 'opacity-100 translate-x-0 z-20' :
+                    carouselPosition === 2 ? 'opacity-100 translate-x-[-100%] z-10' :
+                    'opacity-100 translate-x-[100%] z-10'
                   }`}
                   style={{
                     transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
@@ -337,13 +337,13 @@ export default function MinimalistTodo() {
                   <Settings size={28} strokeWidth={2} className="text-gray-900" />
                 </button>
 
-                {/* Analytics Button */}
+                {/* Analytics Button - Position 2 */}
                 <button
                   onClick={openAnalytics}
                   className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
-                    carouselPosition === 2 ? 'opacity-100 translate-x-0 z-10' :
-                    carouselPosition === 0 ? 'opacity-0 translate-x-[-100%]' :
-                    'opacity-0 translate-x-[100%]'
+                    carouselPosition === 2 ? 'opacity-100 translate-x-0 z-20' :
+                    carouselPosition === 0 ? 'opacity-100 translate-x-[-100%] z-10' :
+                    'opacity-100 translate-x-[100%] z-10'
                   }`}
                   style={{
                     transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
