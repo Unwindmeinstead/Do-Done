@@ -180,9 +180,33 @@ export default function MinimalistTodo() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <>
+      <style>{`
+        /* iOS Keyboard Handling */
+        @supports (-webkit-touch-callout: none) {
+          .keyboard-input-container {
+            position: fixed;
+            bottom: env(safe-area-inset-bottom);
+            left: 0;
+            right: 0;
+            padding-bottom: max(env(safe-area-inset-bottom), 8px);
+            background: black;
+          }
+        }
+
+        /* Ensure proper keyboard behavior */
+        input:focus {
+          outline: none;
+        }
+
+        /* Prevent zoom on input focus */
+        input[type="text"] {
+          font-size: 16px;
+        }
+      `}</style>
+      <div className="min-h-screen bg-black text-white flex flex-col overflow-hidden">
       {/* Todo List */}
-      <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
+      <div className={`flex-1 px-6 max-w-md mx-auto w-full overflow-y-auto ${showInput ? 'pb-20' : 'pb-32'}`}>
         {todos.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-gray-600 text-sm font-light leading-relaxed">
@@ -228,7 +252,7 @@ export default function MinimalistTodo() {
       </div>
 
       {/* Add Button / Input */}
-      <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 pointer-events-none">
+      <div className="keyboard-input-container p-6 pointer-events-none">
         <div className="max-w-md mx-auto pointer-events-auto">
           {showInput ? (
             <div className="bg-zinc-900 rounded-full p-2 shadow-2xl overflow-hidden">
@@ -418,5 +442,6 @@ export default function MinimalistTodo() {
         </div>
       )}
     </div>
+  </>
   );
 }
