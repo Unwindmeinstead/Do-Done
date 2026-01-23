@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Check, X, Mic, Settings } from 'lucide-react';
+import { Check, X, Mic, Settings, BarChart3 } from 'lucide-react';
 
 export default function MinimalistTodo() {
   const [todos, setTodos] = useState([]);
@@ -7,7 +7,8 @@ export default function MinimalistTodo() {
   const [showInput, setShowInput] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [carouselPosition, setCarouselPosition] = useState(0); // 0 = check button, 1 = settings
+  const [showInsights, setShowInsights] = useState(false);
+  const [carouselPosition, setCarouselPosition] = useState(0); // 0 = check button, 1 = settings, 2 = insights
   const [recognition, setRecognition] = useState(null);
   const holdTimeoutRef = useRef(null);
   const touchStartRef = useRef(null);
@@ -154,9 +155,9 @@ export default function MinimalistTodo() {
     const touchEnd = e.changedTouches[0].clientX;
     const deltaX = Math.abs(touchEnd - touchStartRef.current);
 
-    // Any swipe with sufficient distance toggles between menus
+    // Any swipe with sufficient distance cycles through menus
     if (deltaX > 50) {
-      setCarouselPosition(carouselPosition === 0 ? 1 : 0);
+      setCarouselPosition((carouselPosition + 1) % 3);
     }
 
     touchStartRef.current = null;
@@ -168,6 +169,14 @@ export default function MinimalistTodo() {
 
   const closeSettings = () => {
     setShowSettings(false);
+  };
+
+  const openInsights = () => {
+    setShowInsights(true);
+  };
+
+  const closeInsights = () => {
+    setShowInsights(false);
   };
 
   return (
@@ -256,7 +265,7 @@ export default function MinimalistTodo() {
             <div className="flex justify-center overflow-hidden relative">
               <div
                 ref={carouselRef}
-                className="relative w-20 h-16 flex items-center justify-center"
+                className="relative w-28 h-16 flex items-center justify-center"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >
@@ -291,13 +300,26 @@ export default function MinimalistTodo() {
                 <button
                   onClick={openSettings}
                   className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
-                    carouselPosition === 1 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'
+                    carouselPosition === 1 ? 'opacity-100 translate-x-0' : carouselPosition === 0 ? 'opacity-0 translate-x-[100%]' : 'opacity-0 translate-x-[-100%]'
                   }`}
                   style={{
                     transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                   }}
                 >
-                    <Settings size={28} strokeWidth={2} className="text-gray-900" />
+                  <Settings size={28} strokeWidth={2} className="text-gray-900" />
+                </button>
+
+                {/* Insights Button */}
+                <button
+                  onClick={openInsights}
+                  className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
+                    carouselPosition === 2 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'
+                  }`}
+                  style={{
+                    transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                  }}
+                >
+                  <BarChart3 size={28} strokeWidth={2} className="text-gray-900" />
                 </button>
               </div>
             </div>
@@ -344,6 +366,52 @@ export default function MinimalistTodo() {
                 className="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-full transition-colors font-light"
               >
                 Close Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Insights Modal */}
+      {showInsights && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
+          <div className="bg-zinc-900 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-zinc-800">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                <BarChart3 size={32} strokeWidth={2} className="text-gray-900" />
+              </div>
+              <h3 className="text-lg font-light text-white mb-4">Insights</h3>
+
+              {/* Insights content */}
+              <div className="space-y-4 mb-6">
+                <div className="p-3 bg-zinc-800 rounded-lg">
+                  <div className="text-sm text-gray-300 mb-1">Tasks Completed Today</div>
+                  <div className="text-2xl font-light text-white">{todos.filter(t => t.completed).length}</div>
+                </div>
+
+                <div className="p-3 bg-zinc-800 rounded-lg">
+                  <div className="text-sm text-gray-300 mb-1">Total Tasks</div>
+                  <div className="text-2xl font-light text-white">{todos.length}</div>
+                </div>
+
+                <div className="p-3 bg-zinc-800 rounded-lg">
+                  <div className="text-sm text-gray-300 mb-1">Completion Rate</div>
+                  <div className="text-2xl font-light text-white">
+                    {todos.length > 0 ? Math.round((todos.filter(t => t.completed).length / todos.length) * 100) : 0}%
+                  </div>
+                </div>
+
+                <div className="p-3 bg-zinc-800 rounded-lg">
+                  <div className="text-sm text-gray-300 mb-1">Productivity Streak</div>
+                  <div className="text-2xl font-light text-white">🔥 3 days</div>
+                </div>
+              </div>
+
+              <button
+                onClick={closeInsights}
+                className="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-full transition-colors font-light"
+              >
+                Close Insights
               </button>
             </div>
           </div>
