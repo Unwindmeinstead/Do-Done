@@ -25,20 +25,6 @@ export default function MinimalistTodo() {
   }, [todos]);
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && showInput) {
-        setShowInput(false);
-        setNewTodo('');
-      }
-    };
-
-    if (showInput) {
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
-    }
-  }, [showInput]);
-
-  useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognitionInstance = new SpeechRecognition();
@@ -82,8 +68,6 @@ export default function MinimalistTodo() {
     if (newTodo.trim()) {
       setTodos([...todos, { id: Date.now(), text: newTodo, completed: false }]);
       setNewTodo('');
-      setShowInput(false);
-    } else {
       setShowInput(false);
     }
   };
@@ -187,12 +171,12 @@ export default function MinimalistTodo() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col font-['Poppins']">
+    <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Todo List */}
       <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
         {todos.length === 0 ? (
-          <div className="text-center py-24">
-            <p className="text-white/60 text-lg font-light leading-relaxed">
+          <div className="text-center py-16">
+            <p className="text-white text-base font-light leading-relaxed mt-4 opacity-70">
               What are you getting done today?
             </p>
           </div>
@@ -235,19 +219,38 @@ export default function MinimalistTodo() {
       </div>
 
       {/* Add Button / Input */}
-      <div className="fixed bottom-0 left-0 right-0 pointer-events-none" style={{ bottom: 'env(safe-area-inset-bottom)' }}>
-        <div className="max-w-md mx-auto pointer-events-auto px-6">
+      <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 pointer-events-none">
+        <div className="max-w-md mx-auto pointer-events-auto">
           {showInput ? (
-            <div className="bg-zinc-900 rounded-2xl p-4 shadow-2xl mb-4 transition-all duration-300 ease-out">
-              <input
-                type="text"
-                value={newTodo}
-                onChange={(e) => setNewTodo(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && addTodo()}
-                placeholder="What needs to get done?"
-                className="w-full bg-transparent text-base focus:outline-none text-white placeholder-gray-500"
-                autoFocus
-              />
+            <div className="bg-zinc-900 rounded-full p-2 shadow-2xl overflow-hidden">
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  value={newTodo}
+                  onChange={(e) => setNewTodo(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addTodo()}
+                  placeholder="Add a priority..."
+                  className="flex-1 bg-transparent px-4 py-2 text-sm focus:outline-none text-white placeholder-gray-600 min-w-0"
+                  autoFocus
+                />
+                <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+                  <button
+                    onClick={addTodo}
+                    className="w-10 h-10 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors"
+                  >
+                    <Check size={18} strokeWidth={2.5} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowInput(false);
+                      setNewTodo('');
+                    }}
+                    className="w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center transition-colors"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="flex justify-center overflow-hidden relative">
