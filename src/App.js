@@ -25,27 +25,6 @@ export default function MinimalistTodo() {
     localStorage.setItem('minimalist-todos', JSON.stringify(todos));
   }, [todos]);
 
-  // iOS Keyboard Handling - Microsoft To Do style
-  useEffect(() => {
-    function setVH() {
-      if (window.visualViewport) {
-        const vh = window.visualViewport.height * 0.01;
-        document.documentElement.style.setProperty("--vh", `${vh}px`);
-      }
-    }
-
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener("resize", setVH);
-      setVH();
-    }
-
-    return () => {
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener("resize", setVH);
-      }
-    };
-  }, []);
-
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -201,68 +180,9 @@ export default function MinimalistTodo() {
   };
 
   return (
-    <>
-      <style>{`
-        :root {
-          --vh: 1vh;
-          --safe-bottom: env(safe-area-inset-bottom);
-        }
-
-        body, html {
-          margin: 0;
-          padding: 0;
-          height: 100%;
-          background: black;
-        }
-
-        .app {
-          height: calc(var(--vh) * 100);
-          display: flex;
-          flex-direction: column;
-        }
-
-        .list {
-          flex: 1;
-          overflow-y: auto;
-          padding-bottom: 80px;
-        }
-
-        .input-dock {
-          display: flex;
-          gap: 8px;
-          padding: 12px;
-          padding-bottom: calc(12px + var(--safe-bottom));
-          background: #111;
-          transition: transform 0.15s ease-out;
-        }
-
-        .input-dock input {
-          flex: 1;
-          background: #000;
-          border: none;
-          color: white;
-          padding: 12px;
-          border-radius: 8px;
-          outline: none;
-          font-size: 16px;
-        }
-
-        .input-dock button {
-          background: #e53935;
-          border: none;
-          color: white;
-          padding: 12px 16px;
-          border-radius: 50%;
-        }
-
-        /* Ensure proper keyboard behavior */
-        input:focus {
-          outline: none;
-        }
-      `}</style>
-      <div className="app">
-        {/* Todo List */}
-        <div className="list px-6 max-w-md mx-auto">
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      {/* Todo List */}
+      <div className="flex-1 px-6 pb-32 max-w-md mx-auto w-full">
         {todos.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-gray-600 text-sm font-light leading-relaxed">
@@ -307,35 +227,45 @@ export default function MinimalistTodo() {
         )}
       </div>
 
-        {/* Input Dock - Microsoft To Do style */}
-        <div className="input-dock max-w-md mx-auto">
+      {/* Add Button / Input */}
+      <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 pointer-events-none">
+        <div className="max-w-md mx-auto pointer-events-auto">
           {showInput ? (
-            <>
-              <input
-                type="text"
-                value={newTodo}
-                onChange={(e) => setNewTodo(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && addTodo()}
-                placeholder="Add a task..."
-                autoFocus
-              />
-              <button onClick={addTodo}>
-                <Check size={18} strokeWidth={2.5} />
-              </button>
-              <button
-                onClick={() => {
-                  setShowInput(false);
-                  setNewTodo('');
-                }}
-              >
-                <X size={18} />
-              </button>
-            </>
+            <div className="bg-zinc-900 rounded-full p-2 shadow-2xl overflow-hidden">
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  value={newTodo}
+                  onChange={(e) => setNewTodo(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addTodo()}
+                  placeholder="Add a priority..."
+                  className="flex-1 bg-transparent px-4 py-2 text-sm focus:outline-none text-white placeholder-gray-600 min-w-0"
+                  autoFocus
+                />
+                <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+                  <button
+                    onClick={addTodo}
+                    className="w-10 h-10 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors"
+                  >
+                    <Check size={18} strokeWidth={2.5} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowInput(false);
+                      setNewTodo('');
+                    }}
+                    className="w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center transition-colors"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              </div>
+            </div>
           ) : (
-            <div className="flex justify-center overflow-hidden relative w-full">
+            <div className="flex justify-center overflow-hidden relative">
               <div
                 ref={carouselRef}
-                className="relative w-20 h-12 flex items-center justify-center"
+                className="relative w-28 h-16 flex items-center justify-center"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >
@@ -352,7 +282,7 @@ export default function MinimalistTodo() {
                     handleButtonRelease();
                     handleTouchEnd(e);
                   }}
-                  className={`absolute w-12 h-12 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
+                  className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
                     isRecording ? 'bg-gray-100' : ''
                   } ${carouselPosition === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[-100%]'}`}
                   style={{
@@ -360,79 +290,80 @@ export default function MinimalistTodo() {
                   }}
                 >
                   {isRecording ? (
-                    <Mic size={24} strokeWidth={3} className="text-gray-800" />
+                    <Mic size={32} strokeWidth={3} className="text-gray-800" />
                   ) : (
-                    <Check size={24} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" className="transform rotate-12 text-gray-900" />
+                    <Check size={32} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" className="transform rotate-12 text-gray-900" />
                   )}
                 </button>
 
                 {/* Settings Button */}
                 <button
                   onClick={openSettings}
-                  className={`absolute w-12 h-12 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
+                  className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
                     carouselPosition === 1 ? 'opacity-100 translate-x-0' : carouselPosition === 0 ? 'opacity-0 translate-x-[100%]' : 'opacity-0 translate-x-[-100%]'
                   }`}
                   style={{
                     transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                   }}
                 >
-                  <Settings size={20} strokeWidth={2} className="text-gray-900" />
+                  <Settings size={28} strokeWidth={2} className="text-gray-900" />
                 </button>
 
                 {/* Insights Button */}
                 <button
                   onClick={openInsights}
-                  className={`absolute w-12 h-12 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
+                  className={`absolute w-16 h-16 rounded-full bg-white hover:bg-gray-50 flex items-center justify-center shadow-2xl transition-all active:scale-95 ${
                     carouselPosition === 2 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[100%]'
                   }`}
                   style={{
                     transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                   }}
                 >
-                  <BarChart3 size={20} strokeWidth={2} className="text-gray-900" />
+                  <BarChart3 size={28} strokeWidth={2} className="text-gray-900" />
                 </button>
               </div>
             </div>
           )}
         </div>
+      </div>
 
       {/* Settings Modal */}
       {showSettings && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
-          <div className="bg-black rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-white/10">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
             <div className="text-center">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-                <Settings size={32} strokeWidth={2} className="text-gray-900" />
+              <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
+                <Settings size={32} strokeWidth={2} className="text-white" />
               </div>
-              <h3 className="text-lg font-light text-white mb-4">Settings</h3>
+              <h3 className="text-lg font-light text-black mb-4">Settings</h3>
 
               {/* Settings options */}
               <div className="space-y-4 mb-6">
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
                   <span className="text-sm text-black">Dark Mode</span>
-                  <div className="w-10 h-6 bg-gray-300 rounded-full relative">
-                    <div className="w-5 h-5 bg-black rounded-full absolute right-0.5 top-0.5"></div>
+                  <div className="w-10 h-6 bg-gray-400 rounded-full relative">
+                    <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
                   <span className="text-sm text-black">Voice Input</span>
                   <div className="w-10 h-6 bg-red-500 rounded-full relative">
                     <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5"></div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
                   <span className="text-sm text-black">Notifications</span>
-                  <div className="w-10 h-6 bg-gray-300 rounded-full relative">
-                    <div className="w-5 h-5 bg-black rounded-full absolute right-0.5 top-0.5"></div>
+                  <div className="w-10 h-6 bg-gray-400 rounded-full relative">
+                    <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={closeSettings}
-                className="w-full bg-white hover:bg-gray-50 text-black py-3 px-4 rounded-full transition-colors font-light"
+                className="w-full bg-black hover:bg-gray-800 text-white py-3 px-4 rounded-full transition-colors font-light"
               >
                 Close Settings
               </button>
@@ -444,33 +375,33 @@ export default function MinimalistTodo() {
       {/* Insights Modal */}
       {showInsights && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
-          <div className="bg-black rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-white/10">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
             <div className="text-center">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-                <BarChart3 size={32} strokeWidth={2} className="text-gray-900" />
+              <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-4">
+                <BarChart3 size={32} strokeWidth={2} className="text-white" />
               </div>
-              <h3 className="text-lg font-light text-white mb-4">Insights</h3>
+              <h3 className="text-lg font-light text-black mb-4">Insights</h3>
 
               {/* Insights content */}
               <div className="space-y-4 mb-6">
-                <div className="p-3 bg-white rounded-lg">
+                <div className="p-3 bg-gray-100 rounded-lg">
                   <div className="text-sm text-black mb-1">Tasks Completed Today</div>
                   <div className="text-2xl font-light text-black">{todos.filter(t => t.completed).length}</div>
                 </div>
 
-                <div className="p-3 bg-white rounded-lg">
+                <div className="p-3 bg-gray-100 rounded-lg">
                   <div className="text-sm text-black mb-1">Total Tasks</div>
                   <div className="text-2xl font-light text-black">{todos.length}</div>
                 </div>
 
-                <div className="p-3 bg-white rounded-lg">
+                <div className="p-3 bg-gray-100 rounded-lg">
                   <div className="text-sm text-black mb-1">Completion Rate</div>
                   <div className="text-2xl font-light text-black">
                     {todos.length > 0 ? Math.round((todos.filter(t => t.completed).length / todos.length) * 100) : 0}%
                   </div>
                 </div>
 
-                <div className="p-3 bg-white rounded-lg">
+                <div className="p-3 bg-gray-100 rounded-lg">
                   <div className="text-sm text-black mb-1">Productivity Streak</div>
                   <div className="text-2xl font-light text-black">🔥 3 days</div>
                 </div>
@@ -478,7 +409,7 @@ export default function MinimalistTodo() {
 
               <button
                 onClick={closeInsights}
-                className="w-full bg-white hover:bg-gray-50 text-black py-3 px-4 rounded-full transition-colors font-light"
+                className="w-full bg-black hover:bg-gray-800 text-white py-3 px-4 rounded-full transition-colors font-light"
               >
                 Close Insights
               </button>
@@ -487,6 +418,5 @@ export default function MinimalistTodo() {
         </div>
       )}
     </div>
-  </>
   );
 }
