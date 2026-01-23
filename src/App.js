@@ -205,7 +205,7 @@ export default function MinimalistTodo() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${
+    <div className={`h-screen w-screen fixed inset-0 flex flex-col transition-colors duration-300 overflow-hidden ${
       darkMode ? 'bg-black text-white' : 'bg-white text-black'
     }`}>
       {/* Todo List */}
