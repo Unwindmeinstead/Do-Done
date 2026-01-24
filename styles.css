@@ -89,14 +89,14 @@ body {
 
 .task-splash {
     position: fixed;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.9);
     color: var(--text-primary);
     font-size: 24px;
     font-weight: 600;
     text-align: center;
-    z-index: 1000;
+    z-index: 2100;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1),
