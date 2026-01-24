@@ -25,9 +25,18 @@ body {
     height: 100%;
     width: 100%;
     overflow: hidden;
+    overscroll-behavior: none;
+    /* Prevent elastic scrolling showing under-color */
     background: var(--bg-primary);
     font-family: 'Poppins', -apple-system, sans-serif;
     color: var(--text-primary);
+}
+
+/* Hide scrollbar for seamless look */
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+    display: none;
 }
 
 #app {
@@ -36,16 +45,20 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
+    background: var(--bg-primary);
+    /* Ensure app bg covers everything */
 }
 
 /* Main View - Always Task List */
 .main-content {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
     z-index: 10;
-    padding: var(--safe-top) 20px 100px;
-    /* Space for bottom button */
+    padding: var(--safe-top) 20px 120px;
+    /* Ample space for bottom fab */
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Overlays (Insights/Settings) */
@@ -60,6 +73,7 @@ body {
     transform: scale(0.95);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     overflow-y: auto;
+    overscroll-behavior: none;
 }
 
 .overlay-page.active {
