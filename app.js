@@ -196,7 +196,7 @@ class DoneApp {
                 </div>
 
                 <div class="app-info">
-                    <span class="app-version">Done v1.6.0</span>
+                    <span class="app-version">Done v1.7.0</span>
                     <span class="app-credit">Designed for Focus</span>
                 </div>
             </div>
@@ -211,12 +211,12 @@ class DoneApp {
         const list = document.getElementById('tasksList');
         const bottomNav = document.getElementById('bottomNav');
 
-        // Single Icon Carousel Swiping - v2
+        // Single Icon Carousel Swiping - v3 (Robust Tracking)
         let startX = 0;
         let lastShift = 0;
         let isDragging = false;
         const navTrack = document.getElementById('navTrack');
-        const order = [1, 0, 2]; // Insights, Tasks, Settings
+        const order = [1, 0, 2]; // Map to Modes: Insights (1), Tasks (0), Settings (2)
 
         bottomNav.addEventListener('touchstart', e => {
             startX = e.touches[0].clientX;
@@ -228,19 +228,20 @@ class DoneApp {
 
         bottomNav.addEventListener('touchmove', e => {
             const moveX = e.touches[0].clientX - startX;
-            if (Math.abs(moveX) > 10) isDragging = true;
+            if (Math.abs(moveX) > 5) isDragging = true; // High sensitivity
 
-            // Real-time tracking within bounds
             const shift = lastShift + moveX;
-            navTrack.style.transform = `translateX(${shift}px)`;
+            // Bound the track so it doesn't slide into infinity
+            const boundedShift = Math.max(-144, Math.min(0, shift));
+            navTrack.style.transform = `translateX(${boundedShift}px)`;
         }, { passive: true });
 
         bottomNav.addEventListener('touchend', e => {
             const diff = e.changedTouches[0].clientX - startX;
-            navTrack.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+            navTrack.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
 
             const index = order.indexOf(this.mode);
-            if (isDragging && Math.abs(diff) > 30) {
+            if (isDragging && Math.abs(diff) > 25) {
                 if (diff > 0 && index > 0) {
                     this.selectMode(order[index - 1]);
                 } else if (diff < 0 && index < order.length - 1) {
@@ -252,14 +253,13 @@ class DoneApp {
                 this.updateNavUI();
             }
 
-            // Reset dragging state after a tiny delay to allow click event to be blocked
+            // Allow a tiny window for click blocking
             setTimeout(() => {
-                if (!isDragging) return;
-                // isDragging is handled in the 'click' listener too
-            }, 50);
+                if (isDragging) isDragging = false;
+            }, 100);
         }, { passive: true });
 
-        // Manual Click to "Activate" the selected mode
+        // Manual Click to "Activate"
         bottomNav.addEventListener('click', (e) => {
             if (isDragging) return;
             this.activatePage();
