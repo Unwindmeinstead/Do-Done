@@ -365,7 +365,6 @@ class DoneApp {
         input.innerText = ''; // Clear text content
         input.classList.remove('typing');
         document.getElementById('inputContainer').classList.remove('typing');
-        input.blur(); // Dismiss keyboard to show splash clearly
 
         this.showSplash(text);
         this.haptic();
