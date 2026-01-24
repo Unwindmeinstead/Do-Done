@@ -130,30 +130,6 @@ class DoneApp {
             
             <div class="settings-container">
                 <div class="settings-section">
-                    <span class="section-title">Preferences</span>
-                    <div class="settings-group">
-                        <div class="setting-item">
-                            <div class="setting-label">
-                                <span class="setting-name">Haptic Feedback</span>
-                                <span class="setting-desc">Vibrate on interactions</span>
-                            </div>
-                            <label class="ios-toggle">
-                                <input type="checkbox" ${this.settings.haptics ? 'checked' : ''} onchange="app.toggleSetting('haptics')">
-                            </label>
-                        </div>
-                        <div class="setting-item">
-                            <div class="setting-label">
-                                <span class="setting-name">Light Mode</span>
-                                <span class="setting-desc">Experimental</span>
-                            </div>
-                            <label class="ios-toggle">
-                                <input type="checkbox" ${this.settings.theme === 'light' ? 'checked' : ''} onchange="app.toggleSetting('theme')">
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="settings-section">
                     <span class="section-title">Data</span>
                     <div class="settings-group">
                         <button class="danger-btn" onclick="app.clearData()">
