@@ -78,13 +78,21 @@ body {
     position: fixed;
     inset: 0;
     background: var(--bg-primary);
-    z-index: 50;
+    z-index: 500;
+    /* Higher than before */
     padding: calc(var(--safe-top) + 20px) 20px calc(env(safe-area-inset-bottom) + 120px);
     opacity: 0;
     pointer-events: none;
     overscroll-behavior: none;
-    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(100%);
+    /* Slide from bottom */
+}
+
+.overlay-page.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
 }
 
 .task-splash {
@@ -123,11 +131,7 @@ body {
 }
 
 
-.overlay-page.active {
-    opacity: 1;
-    pointer-events: auto;
-    transform: scale(1);
-}
+/* Removed scale active as we use translateY above */
 
 /* Close Button for Overlays */
 .close-overlay {
@@ -193,10 +197,18 @@ body {
     border: none;
     background: transparent;
     color: var(--bg-primary);
+    opacity: 0.3;
+    /* Dim non-active */
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.nav-track .nav-item.active-preview {
+    opacity: 1;
+    transform: scale(1.1);
 }
 
 .nav-item svg {
