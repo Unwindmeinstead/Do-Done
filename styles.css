@@ -78,21 +78,13 @@ body {
     position: fixed;
     inset: 0;
     background: var(--bg-primary);
-    z-index: 500;
-    /* Higher than before */
+    z-index: 50;
     padding: calc(var(--safe-top) + 20px) 20px calc(env(safe-area-inset-bottom) + 120px);
     opacity: 0;
     pointer-events: none;
     overscroll-behavior: none;
-    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    transform: translateY(100%);
-    /* Slide from bottom */
-}
-
-.overlay-page.active {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(20px);
 }
 
 .task-splash {
@@ -131,7 +123,11 @@ body {
 }
 
 
-/* Removed scale active as we use translateY above */
+.overlay-page.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+}
 
 /* Close Button for Overlays */
 .close-overlay {
@@ -196,36 +192,18 @@ body {
     flex-shrink: 0;
     border: none;
     background: transparent;
-    color: #000000;
-    /* Pure black for max contrast on white button */
+    color: var(--bg-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* Specific Active Highlighting */
-.nav-track .nav-item {
-    opacity: 0.2;
-    /* Dim by default */
-}
-
-.nav-track .nav-item.active-preview {
-    opacity: 1;
-    /* Full contrast active */
-    transform: scale(1.15);
 }
 
 .nav-item svg {
-    width: 32px;
-    /* Larger icons */
-    height: 32px;
-    stroke-width: 3px;
-    /* Thicker for better definition */
+    width: 28px;
+    height: 28px;
     stroke: currentColor;
 }
-
 
 
 /* Minimal Input Bar - Rectangular with Curved Borders */

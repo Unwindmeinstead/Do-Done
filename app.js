@@ -196,7 +196,7 @@ class DoneApp {
                 </div>
 
                 <div class="app-info">
-                    <span class="app-version">Done v1.7.0</span>
+                    <span class="app-version">Done v1.3.0</span>
                     <span class="app-credit">Designed for Focus</span>
                 </div>
             </div>
@@ -211,60 +211,16 @@ class DoneApp {
         const list = document.getElementById('tasksList');
         const bottomNav = document.getElementById('bottomNav');
 
-        // Single Icon Carousel Swiping - v3 (Robust Tracking)
+        // Swipe on Button Area
         let startX = 0;
-        let lastShift = 0;
-        let isDragging = false;
-        const navTrack = document.getElementById('navTrack');
-        const order = [1, 0, 2]; // Map to Modes: Insights (1), Tasks (0), Settings (2)
-
-        bottomNav.addEventListener('touchstart', e => {
-            startX = e.touches[0].clientX;
-            isDragging = false;
-            navTrack.style.transition = 'none';
-            const index = order.indexOf(this.mode);
-            lastShift = index * -72;
-        }, { passive: true });
-
-        bottomNav.addEventListener('touchmove', e => {
-            const moveX = e.touches[0].clientX - startX;
-            if (Math.abs(moveX) > 5) isDragging = true; // High sensitivity
-
-            const shift = lastShift + moveX;
-            // Bound the track so it doesn't slide into infinity
-            const boundedShift = Math.max(-144, Math.min(0, shift));
-            navTrack.style.transform = `translateX(${boundedShift}px)`;
-        }, { passive: true });
-
+        bottomNav.addEventListener('touchstart', e => startX = e.touches[0].clientX, { passive: true });
         bottomNav.addEventListener('touchend', e => {
             const diff = e.changedTouches[0].clientX - startX;
-            navTrack.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
-
-            const index = order.indexOf(this.mode);
-            if (isDragging && Math.abs(diff) > 25) {
-                if (diff > 0 && index > 0) {
-                    this.selectMode(order[index - 1]);
-                } else if (diff < 0 && index < order.length - 1) {
-                    this.selectMode(order[index + 1]);
-                } else {
-                    this.updateNavUI();
-                }
-            } else {
-                this.updateNavUI();
+            if (Math.abs(diff) > 40) {
+                if (diff > 0 && this.mode > 0) this.setMode(this.mode - 1);
+                else if (diff < 0 && this.mode < 2) this.setMode(this.mode + 1);
             }
-
-            // Allow a tiny window for click blocking
-            setTimeout(() => {
-                if (isDragging) isDragging = false;
-            }, 100);
         }, { passive: true });
-
-        // Manual Click to "Activate"
-        bottomNav.addEventListener('click', (e) => {
-            if (isDragging) return;
-            this.activatePage();
-            this.haptic();
-        });
 
         // Input Handling
         input.addEventListener('keydown', e => {
@@ -319,51 +275,37 @@ class DoneApp {
 
     // --- Modes & UI ---
 
-    selectMode(m) {
-        if (this.mode === m) return;
-        this.mode = m;
-        this.updateNavUI();
-        this.haptic();
-    }
+    setMode(m) {
+        if (this.mode === m && m !== 0) return; // Already there, unless it's tasks where we might want to toggle input
 
-    activatePage() {
-        // Handle current selected mode
-        if (this.mode === 0) {
+        if (this.mode === 0 && m === 0) {
             this.toggleInput();
             return;
         }
 
-        const id = this.mode === 1 ? 'insightsOverlay' : 'settingsOverlay';
-        const overlay = document.getElementById(id);
+        this.mode = m;
+        this.updateNavUI();
+        this.haptic();
 
-        // If already active, don't re-trigger (avoids flickering)
-        if (overlay.classList.contains('active')) return;
-
-        // Navigate - Close current overlays UI and open the one for the selected mode
+        // Navigate - Close current overlays UI and open the one for the new mode
         document.querySelectorAll('.overlay-page').forEach(el => el.classList.remove('active'));
-        this.openOverlay(id);
-    }
 
-    setMode(m) {
-        // Direct jump from a specific action (e.g. settings button in overlays)
-        this.selectMode(m);
-        this.activatePage();
+        if (this.mode === 1) this.openOverlay('insightsOverlay');
+        else if (this.mode === 2) this.openOverlay('settingsOverlay');
     }
 
     updateNavUI() {
         const track = document.getElementById('navTrack');
         if (!track) return;
 
+        // Modes: 0:Tasks, 1:Insights, 2:Settings
+        // HTML Order: 1 (index 0), 0 (index 1), 2 (index 2)
         const order = [1, 0, 2];
         const index = order.indexOf(this.mode);
 
+        // Push the track to reveal the correct item (offset by item width)
         const shift = index * -72;
         track.style.transform = `translateX(${shift}px)`;
-
-        // Highlight active preview
-        document.querySelectorAll('.nav-item').forEach((el, i) => {
-            el.classList.toggle('active-preview', i === index);
-        });
     }
 
     toggleInput() {
