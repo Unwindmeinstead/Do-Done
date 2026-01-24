@@ -263,29 +263,22 @@ body {
     pointer-events: auto;
 }
 
-/* ContentEditable Input - Smoother Caret */
+/* ContentEditable Input */
 .task-input-div {
     flex: 1;
     background: transparent;
     border: none;
     color: var(--text-primary);
-    caret-color: #ffffff;
-    /* Explicitly set high-contrast caret */
     font-size: 17px;
     font-weight: 400;
     outline: none;
-    padding: 0 8px 0 0;
-    /* Extra right space for caret */
+    padding: 0;
     min-width: 50px;
     white-space: nowrap;
-    overflow-x: auto;
-    /* Allow horizontal scroll without clipping */
-    overflow-y: hidden;
+    overflow: hidden;
     user-select: text;
     -webkit-user-select: text;
-    -webkit-tap-highlight-color: transparent;
 }
-
 
 
 /* Placeholder for contenteditable */
