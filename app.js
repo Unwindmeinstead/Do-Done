@@ -227,15 +227,17 @@ class DoneApp {
             }
         });
 
-        // Typing Effect State Management
+        // Flash Effect on Type
         let typeTimeout;
         input.addEventListener('input', () => {
+            input.classList.add('typing');
             inputContainer.classList.add('typing');
 
             clearTimeout(typeTimeout);
             typeTimeout = setTimeout(() => {
+                input.classList.remove('typing');
                 inputContainer.classList.remove('typing');
-            }, 400); // 400ms for a smoother "fade out" feeling
+            }, 100); // Fast flash
         });
 
         // Task List Delegation - Simplified since buttons have inline handlers now
