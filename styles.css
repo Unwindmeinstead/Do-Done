@@ -235,33 +235,29 @@ body {
     bottom: calc(env(safe-area-inset-bottom) + 12px);
     left: 16px;
     right: 16px;
-    background: rgba(255, 255, 255, 0.05);
-    /* Very subtle background */
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(28, 28, 30, 0.85);
+    /* Premium Dark Theme Pill */
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     border-radius: 40px;
-    /* Perfect Pill Shape */
     padding: 10px 20px;
     display: flex;
     align-items: center;
     gap: 12px;
     z-index: 2000;
-    border: 1.5px solid rgba(255, 255, 255, 0.6);
-    /* High contrast, solid continuous line */
-    background: rgba(28, 28, 30, 0.85);
-    /* Slightly darker for better border pop */
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    border: none;
+    /* Removed all borders */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
     transform: translateY(20px);
     opacity: 0;
     pointer-events: none;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-        opacity 0.4s ease,
-        border-color 0.2s ease;
+        opacity 0.4s ease;
 }
 
 .minimal-input-container.typing {
-    border-color: rgba(255, 255, 255, 0.8);
-    /* Glow subtly on typing */
+    background: rgba(44, 44, 46, 0.95);
+    /* Pulse background instead of border */
 }
 
 
@@ -813,8 +809,8 @@ input:disabled+.ios-toggle {
 }
 
 [data-theme="light"] .minimal-input-container {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
 }
 
 [data-theme="light"] .modal-content {
