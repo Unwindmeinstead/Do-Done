@@ -196,7 +196,7 @@ class DoneApp {
                 </div>
 
                 <div class="app-info">
-                    <span class="app-version">Done v1.3.0</span>
+                    <span class="app-version">Done v1.4.0</span>
                     <span class="app-credit">Designed for Focus</span>
                 </div>
             </div>
@@ -211,14 +211,41 @@ class DoneApp {
         const list = document.getElementById('tasksList');
         const bottomNav = document.getElementById('bottomNav');
 
-        // Swipe on Button Area
+        // Single Icon Carousel Swiping
         let startX = 0;
-        bottomNav.addEventListener('touchstart', e => startX = e.touches[0].clientX, { passive: true });
+        let lastShift = 0;
+        const navTrack = document.getElementById('navTrack');
+        const order = [1, 0, 2]; // Insights, Tasks, Settings
+
+        bottomNav.addEventListener('touchstart', e => {
+            startX = e.touches[0].clientX;
+            navTrack.style.transition = 'none'; // Disable transition for real-time tracking
+            const index = order.indexOf(this.mode);
+            lastShift = index * -72;
+        }, { passive: true });
+
+        bottomNav.addEventListener('touchmove', e => {
+            const moveX = e.touches[0].clientX - startX;
+            // Allow a "peek" restricted to half item width
+            const constrainedMoveX = Math.max(-100, Math.min(100, moveX));
+            navTrack.style.transform = `translateX(${lastShift + constrainedMoveX}px)`;
+        }, { passive: true });
+
         bottomNav.addEventListener('touchend', e => {
             const diff = e.changedTouches[0].clientX - startX;
+            navTrack.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+
+            const index = order.indexOf(this.mode);
             if (Math.abs(diff) > 40) {
-                if (diff > 0 && this.mode > 0) this.setMode(this.mode - 1);
-                else if (diff < 0 && this.mode < 2) this.setMode(this.mode + 1);
+                if (diff > 0 && index > 0) {
+                    this.setMode(order[index - 1]); // Swipe Right -> Left Item
+                } else if (diff < 0 && index < order.length - 1) {
+                    this.setMode(order[index + 1]); // Swipe Left -> Right Item
+                } else {
+                    this.updateNavUI(); // Snap back if no more items
+                }
+            } else {
+                this.updateNavUI(); // Snap back if not enough diff
             }
         }, { passive: true });
 
