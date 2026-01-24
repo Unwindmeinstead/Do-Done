@@ -92,7 +92,8 @@ body {
 /* Bottom Nav - Floating Action Button Only */
 .bottom-nav {
     position: fixed;
-    bottom: calc(var(--safe-bottom) + 30px);
+    bottom: calc(env(safe-area-inset-bottom) + 8px);
+    /* Much lower */
     left: 0;
     right: 0;
     display: flex;
