@@ -563,10 +563,43 @@ input:disabled+.ios-toggle {
     cursor: not-allowed;
 }
 
-/* Danger Zone */
+/* Setting Buttons & Values */
+.setting-btn {
+    width: 100%;
+    padding: 16px 20px;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.2s;
+}
+
+.setting-btn:active {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-icon {
+    font-size: 18px;
+    color: var(--text-tertiary);
+}
+
+.setting-value-hint {
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+.settings-title {
+    margin-bottom: 24px;
+}
+
 .danger-btn {
     width: 100%;
-    padding: 16px;
+    padding: 16px 20px;
     text-align: left;
     background: transparent;
     border: none;
@@ -583,7 +616,7 @@ input:disabled+.ios-toggle {
     background: rgba(255, 71, 87, 0.1);
 }
 
-/* App Info Footer */
+/* App Info & Stats */
 .app-info {
     text-align: center;
     margin-top: 40px;
@@ -601,7 +634,6 @@ input:disabled+.ios-toggle {
     opacity: 0.5;
 }
 
-/* Stats Styles - Keeping minimal */
 .stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -629,4 +661,40 @@ input:disabled+.ios-toggle {
     font-size: 13px;
     color: var(--text-tertiary);
     font-weight: 400;
+}
+
+/* Light Mode Overrides */
+[data-theme="light"] {
+    --bg-primary: #ffffff;
+    --text-primary: #000000;
+    --text-tertiary: rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] .settings-group,
+[data-theme="light"] .setting-item,
+[data-theme="light"] .stat-card {
+    background: #f2f2f7;
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .bottom-nav {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .nav-indicator {
+    background: #000000;
+}
+
+[data-theme="light"] .nav-item.active {
+    color: #ffffff;
+}
+
+[data-theme="light"] .minimal-input-container {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .submit-arrow {
+    background: #000000;
 }

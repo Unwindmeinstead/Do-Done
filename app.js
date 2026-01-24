@@ -2,9 +2,14 @@
 
 class DoneApp {
     constructor() {
-        this.tasks = [];
-        this.settings = { haptics: true };
-        this.mode = 0; // 0: Check, 1: Insights, 2: Settings
+        this.settings = {
+            haptics: true,
+            theme: 'dark', // 'dark', 'light', 'auto'
+            autoSort: true,
+            hideCompleted: false,
+            accentColor: '#ffffff'
+        };
+        this.mode = 0; // 0: Tasks, 1: Insights, 2: Settings
         this.inputActive = false;
 
         this.init();
@@ -126,21 +131,70 @@ class DoneApp {
         // Settings Overlay
         document.getElementById('settingsOverlay').innerHTML = `
             <button class="close-overlay" onclick="app.closeOverlays()">✕</button>
-            <h2>Settings</h2>
+            <h2 class="settings-title">Settings</h2>
             
             <div class="settings-container">
                 <div class="settings-section">
+                    <span class="section-title">Preference</span>
+                    <div class="settings-group">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-name">Haptic Feedback</span>
+                                <span class="setting-desc">Tactile response on actions</span>
+                            </div>
+                            <label class="ios-toggle-wrapper">
+                                <input type="checkbox" ${this.settings.haptics ? 'checked' : ''} onchange="app.toggleSetting('haptics')">
+                                <div class="ios-toggle"></div>
+                            </label>
+                        </div>
+                        <div class="setting-item" onclick="app.cycleTheme()">
+                            <div class="setting-label">
+                                <span class="setting-name">Appearance</span>
+                                <span class="setting-desc">${this.settings.theme.charAt(0).toUpperCase() + this.settings.theme.slice(1)} Mode</span>
+                            </div>
+                            <div class="setting-value-hint">
+                                ${this.settings.theme === 'dark' ? '🌙' : this.settings.theme === 'light' ? '☀️' : '🌗'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <span class="section-title">Workflow</span>
+                    <div class="settings-group">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-name">Auto-Sort</span>
+                                <span class="setting-desc">Keep priority tasks at top</span>
+                            </div>
+                            <label class="ios-toggle-wrapper">
+                                <input type="checkbox" ${this.settings.autoSort ? 'checked' : ''} onchange="app.toggleSetting('autoSort')">
+                                <div class="ios-toggle"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
                     <span class="section-title">Data</span>
                     <div class="settings-group">
+                        <button class="setting-btn" onclick="app.exportData()">
+                            <span>Export JSON</span>
+                            <span class="btn-icon">↓</span>
+                        </button>
+                        <button class="setting-btn" onclick="app.importData()">
+                            <span>Import JSON</span>
+                            <span class="btn-icon">↑</span>
+                        </button>
                         <button class="danger-btn" onclick="app.clearData()">
                             <span>Clear All Data</span>
-                            <span style="font-size: 18px;">›</span>
+                            <span class="btn-icon">×</span>
                         </button>
                     </div>
                 </div>
 
                 <div class="app-info">
-                    <span class="app-version">Done v1.1.0</span>
+                    <span class="app-version">Done v1.2.0</span>
                     <span class="app-credit">Designed for Focus</span>
                 </div>
             </div>
@@ -404,29 +458,76 @@ class DoneApp {
     }
 
     toggleSetting(key) {
-        if (key === 'theme') {
-            this.settings.theme = this.settings.theme === 'light' ? 'dark' : 'light';
-            this.applyTheme();
-            this.saveSettings();
-            setTimeout(() => this.renderOverlays(), 300); // Delay re-render to let toggle animate
-        } else if (this.settings.hasOwnProperty(key)) {
+        if (this.settings.hasOwnProperty(key)) {
             this.settings[key] = !this.settings[key];
-            if (key === 'haptics' && this.settings.haptics) this.haptic();
             this.saveSettings();
-            // Do NOT re-render overlays immediately for simple toggles, 
-            // causing the DOM to be replaced and animation to break.
-            // The checkbox state is already updated by the user click.
+            if (key === 'haptics' && this.settings.haptics) this.haptic();
+            if (key === 'autoSort') this.renderTasks();
         }
+    }
+
+    cycleTheme() {
+        const themes = ['dark', 'light', 'auto'];
+        let idx = themes.indexOf(this.settings.theme);
+        this.settings.theme = themes[(idx + 1) % themes.length];
+        this.applyTheme();
+        this.saveSettings();
+        this.renderOverlays(); // Update hint
+        this.haptic();
     }
 
     applyTheme() {
         if (this.settings.theme === 'light') {
             document.body.setAttribute('data-theme', 'light');
-            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f2f2f7');
-        } else {
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff');
+        } else if (this.settings.theme === 'dark') {
             document.body.removeAttribute('data-theme');
             document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000');
+        } else {
+            // Auto - check system
+            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (isDark) document.body.removeAttribute('data-theme');
+            else document.body.setAttribute('data-theme', 'light');
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#000000' : '#ffffff');
         }
+    }
+
+    exportData() {
+        const data = JSON.stringify({ tasks: this.tasks, settings: this.settings });
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `done-backup-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        this.haptic();
+    }
+
+    importData() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = e => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = event => {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    if (data.tasks) this.tasks = data.tasks;
+                    if (data.settings) this.settings = { ...this.settings, ...data.settings };
+                    this.saveTasks();
+                    this.saveSettings();
+                    this.renderTasks();
+                    this.renderOverlays();
+                    this.applyTheme();
+                    alert('Import successful!');
+                } catch (err) {
+                    alert('Invalid file format.');
+                }
+            };
+            reader.readAsText(file);
+        };
+        input.click();
     }
 
     calculateStreak() {
