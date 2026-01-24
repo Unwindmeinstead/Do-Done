@@ -52,10 +52,13 @@ class DoneApp {
             return;
         }
 
-        // Sort: High Priority > Normal > Completed
+        // Sort: High > Mid > Normal > Completed
         const sorted = [...this.tasks].sort((a, b) => {
             if (a.completed !== b.completed) return a.completed ? 1 : -1;
-            if (a.priority !== b.priority) return a.priority === 'high' ? -1 : 1;
+            const priorityWeight = { high: 2, medium: 1, normal: 0 };
+            const weightA = priorityWeight[a.priority] || 0;
+            const weightB = priorityWeight[b.priority] || 0;
+            if (weightA !== weightB) return weightB - weightA;
             return b.id - a.id;
         });
 
@@ -67,12 +70,12 @@ class DoneApp {
                 <div class="task-content">
                     <span class="task-text">${this.escape(t.text)}</span>
                     <div class="task-meta">
-                        ${t.priority === 'high' ? '<span class="meta-priority">High Priority</span> • ' : ''}
+                        ${t.priority === 'high' ? '<span class="meta-priority high">High Priority</span> • ' : t.priority === 'medium' ? '<span class="meta-priority mid">Medium</span> • ' : ''}
                         <span>${dateStr}</span>
                     </div>
                 </div>
                 <div class="task-actions">
-                    <button class="priority-dot-btn ${t.priority === 'high' ? 'high' : ''}" onclick="event.stopPropagation(); app.togglePriority(${t.id})">
+                    <button class="priority-dot-btn p-${t.priority}" onclick="event.stopPropagation(); app.togglePriority(${t.id})">
                         <div class="priority-dot"></div>
                     </button>
                     <button class="delete-btn" onclick="event.stopPropagation(); app.deleteTask(${t.id})">✕</button>
@@ -428,7 +431,13 @@ class DoneApp {
     togglePriority(id) {
         const task = this.tasks.find(t => t.id === id);
         if (task) {
-            task.priority = task.priority === 'high' ? 'normal' : 'high';
+            // Cycle: High -> Medium -> Normal
+            const cycle = ['high', 'medium', 'normal'];
+            let currIdx = cycle.indexOf(task.priority);
+            if (currIdx === -1) currIdx = 2; // Default to normal if buggy
+
+            task.priority = cycle[(currIdx + 1) % cycle.length];
+
             this.saveTasks();
             this.renderTasks();
             this.haptic();
