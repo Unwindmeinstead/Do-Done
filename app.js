@@ -403,13 +403,16 @@ class DoneApp {
         }
 
         el.innerText = text;
-        el.classList.remove('exit');
-        requestAnimationFrame(() => el.classList.add('active'));
+        el.classList.remove('active', 'exit');
+        void el.offsetWidth; // Force reflow to pulse animation
 
+        el.classList.add('active');
+
+        // Allow user to see the task before it floats away
         setTimeout(() => {
-            el.classList.add('exit');
             el.classList.remove('active');
-        }, 300); // Shorter display time
+            el.classList.add('exit');
+        }, 800);
     }
 
     toggleTask(id) {
