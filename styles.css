@@ -8,6 +8,8 @@
     --success: #2ed573;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 20px);
+    color-scheme: dark;
+    /* Signals theme intent to Safari */
 }
 
 * {
@@ -786,6 +788,8 @@ input:disabled+.ios-toggle {
     --bg-primary: #ffffff;
     --text-primary: #000000;
     --text-tertiary: rgba(0, 0, 0, 0.4);
+    color-scheme: light;
+    /* Forces Safari bar to match our white */
 }
 
 [data-theme="light"] .settings-group,
