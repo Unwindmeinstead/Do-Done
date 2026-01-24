@@ -53,28 +53,30 @@ body {
     /* Ensure app bg covers everything */
 }
 
-/* Main View - Always Task List */
+/* Main View - Full Bleed Utilization */
 .main-content {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
     z-index: 10;
-    /* Ensure content doesn't get hidden behind safe area, but allow background to flow */
-    padding: var(--safe-top) 20px calc(100px + env(safe-area-inset-bottom));
+    /* Extra padding at top for status bar, extra at bottom to clear nav bar and home indicator */
+    padding: calc(var(--safe-top) + 20px) 20px calc(env(safe-area-inset-bottom) + 120px);
     -webkit-overflow-scrolling: touch;
 }
 
-/* Overlays (Insights/Settings) */
+/* Overlays - Fullscreen with Safe Padding */
 .overlay-page {
     position: fixed;
     inset: 0;
     background: var(--bg-primary);
     z-index: 50;
-    padding: calc(var(--safe-top) + 20px) 20px 100px;
+    padding: calc(var(--safe-top) + 20px) 20px calc(env(safe-area-inset-bottom) + 120px);
     opacity: 0;
     pointer-events: none;
     overscroll-behavior: none;
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(20px);
 }
 
 .task-splash {
@@ -130,28 +132,27 @@ body {
     z-index: 60;
 }
 
-/* Bottom Nav - Improved Swipable Track */
+/* Bottom Nav - Maximum Lower Position for iPhone Home Indicator */
 .bottom-nav {
     position: fixed;
-    bottom: calc(env(safe-area-inset-bottom) + 16px);
+    bottom: calc(env(safe-area-inset-bottom) - 4px);
+    /* Tucked right above home indicator */
     left: 50%;
     transform: translateX(-50%);
-    width: 220px;
-    height: 64px;
-    background: rgba(28, 28, 30, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 32px;
+    width: 240px;
+    height: 72px;
+    background: rgba(28, 28, 30, 0.6);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-radius: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    /* High z-index to stay above everything */
-    border: 0.5px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-    padding: 0 8px;
+    border: 0.5px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
+    padding: 0 10px;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-    overflow: hidden;
 }
 
 .bottom-nav.hidden {
@@ -170,8 +171,8 @@ body {
 
 .nav-item {
     flex: 1;
-    height: 48px;
-    border-radius: 24px;
+    height: 56px;
+    border-radius: 28px;
     border: none;
     background: transparent;
     color: var(--text-tertiary);
@@ -200,9 +201,9 @@ body {
     position: absolute;
     top: 8px;
     left: 8px;
-    height: 48px;
+    height: 56px;
     background: var(--text-primary);
-    border-radius: 24px;
+    border-radius: 28px;
     z-index: 1;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
