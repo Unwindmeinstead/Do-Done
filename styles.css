@@ -217,24 +217,25 @@ body {
 }
 
 
-/* Minimal Input Bar - Typewriter Aesthetic */
+/* Minimal Input Bar - Typewriter Aesthetic with Rounded Finish */
 .minimal-input-container {
     position: fixed;
     bottom: calc(env(safe-area-inset-bottom) + 12px);
     left: 16px;
     right: 16px;
     background: transparent;
-    backdrop-filter: blur(35px) saturate(180%);
-    -webkit-backdrop-filter: blur(35px) saturate(180%);
-    border-radius: 0;
-    padding: 14px 4px;
+    backdrop-filter: blur(35px);
+    -webkit-backdrop-filter: blur(35px);
+    border-radius: 20px;
+    /* Restored rounded corners */
+    padding: 14px 20px;
     display: flex;
     align-items: center;
     gap: 14px;
     z-index: 2000;
     border: none;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.05);
-    /* Subtle base guide */
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+    /* Thin base guide */
     box-shadow: none;
     transform: translateY(20px);
     opacity: 0;
@@ -244,11 +245,13 @@ body {
         border-bottom 0.2s ease;
 }
 
-/* Typewriter Underline Animation */
+/* Typewriter Underline Animation - Thin Flicker */
 .minimal-input-container.typing {
-    border-bottom: 2px solid rgba(255, 255, 255, 1);
+    border-bottom: 0.5px solid rgba(255, 255, 255, 1);
+    /* Thin white flicker */
     transition: none;
 }
+
 
 
 
