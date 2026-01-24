@@ -3,6 +3,7 @@
 class DoneApp {
     constructor() {
         this.tasks = [];
+        this.settings = { haptics: true };
         this.mode = 0; // 0: Check, 1: Insights, 2: Settings
         this.inputActive = false;
 
@@ -11,6 +12,7 @@ class DoneApp {
 
     init() {
         this.loadTasks();
+        this.loadSettings();
         this.renderTasks();
         this.renderOverlays(); // Prepare hidden overlays
         this.setupInteractions();
@@ -24,6 +26,15 @@ class DoneApp {
 
     saveTasks() {
         localStorage.setItem('done_tasks', JSON.stringify(this.tasks));
+    }
+
+    loadSettings() {
+        const saved = localStorage.getItem('done_settings');
+        if (saved) this.settings = JSON.parse(saved);
+    }
+
+    saveSettings() {
+        localStorage.setItem('done_settings', JSON.stringify(this.settings));
     }
 
     // --- Rendering ---
@@ -57,19 +68,19 @@ class DoneApp {
         document.getElementById('insightsOverlay').innerHTML = `
             <button class="close-overlay" onclick="app.closeOverlays()">✕</button>
             <h2>Insights</h2>
-            <div class="stats-row">
-                <div class="stat-box">
-                    <span class="stat-num">${this.tasks.filter(t => t.completed).length}</span>
-                    <span class="stat-lbl">Done</span>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value">${this.tasks.filter(t => t.completed).length}</span>
+                    <span class="stat-label">Done</span>
                 </div>
-                <div class="stat-box">
-                    <span class="stat-num">${this.tasks.length}</span>
-                    <span class="stat-lbl">Total</span>
+                <div class="stat-card">
+                    <span class="stat-value">${this.tasks.length}</span>
+                    <span class="stat-label">Total</span>
                 </div>
             </div>
             <!-- Simple Weekly Chart Placeholder -->
-            <div style="height: 100px; display: flex; align-items: flex-end; gap: 5px; opacity: 0.5;">
-                ${[...Array(7)].map(() => `<div style="flex:1; background: #333; height: ${Math.random() * 100}%; border-radius: 4px;"></div>`).join('')}
+            <div style="height: 120px; display: flex; align-items: flex-end; gap: 8px; opacity: 0.8; padding: 0 10px;">
+                ${[...Array(7)].map((_, i) => `<div style="flex:1; background: ${i === 6 ? '#fff' : '#333'}; height: ${Math.random() * 60 + 20}%; border-radius: 4px; min-height: 4px;"></div>`).join('')}
             </div>
         `;
 
@@ -78,16 +89,45 @@ class DoneApp {
             <button class="close-overlay" onclick="app.closeOverlays()">✕</button>
             <h2>Settings</h2>
             
-            <div class="setting-row">
-                <span>Haptic Feedback</span>
-                <label class="ios-toggle"><input type="checkbox" checked></label>
-            </div>
-            <div class="setting-row">
-                <span>Dark Mode</span>
-                <label class="ios-toggle"><input type="checkbox" checked disabled></label>
-            </div>
-            <div class="setting-row" onclick="app.clearData()" style="color: var(--danger); cursor: pointer;">
-                <span>Clear All Data</span>
+            <div class="settings-container">
+                <div class="settings-section">
+                    <span class="section-title">Preferences</span>
+                    <div class="settings-group">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-name">Haptic Feedback</span>
+                                <span class="setting-desc">Vibrate on interactions</span>
+                            </div>
+                            <label class="ios-toggle">
+                                <input type="checkbox" ${this.settings.haptics ? 'checked' : ''} onchange="app.toggleSetting('haptics')">
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-name">Dark Mode</span>
+                                <span class="setting-desc">Always on</span>
+                            </div>
+                            <label class="ios-toggle">
+                                <input type="checkbox" checked disabled>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <span class="section-title">Data</span>
+                    <div class="settings-group">
+                        <button class="danger-btn" onclick="app.clearData()">
+                            <span>Clear All Data</span>
+                            <span style="font-size: 18px;">›</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="app-info">
+                    <span class="app-version">Done v1.0.2</span>
+                    <span class="app-credit">Designed for Focus</span>
+                </div>
             </div>
         `;
     }
@@ -236,7 +276,16 @@ class DoneApp {
         }
     }
 
+    toggleSetting(key) {
+        if (this.settings.hasOwnProperty(key)) {
+            this.settings[key] = !this.settings[key];
+            this.saveSettings();
+            if (key === 'haptics' && this.settings.haptics) this.haptic();
+        }
+    }
+
     haptic() {
+        if (!this.settings.haptics) return;
         if (navigator.vibrate) navigator.vibrate(10);
     }
 
