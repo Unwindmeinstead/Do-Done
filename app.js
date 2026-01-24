@@ -196,7 +196,7 @@ class DoneApp {
                 </div>
 
                 <div class="app-info">
-                    <span class="app-version">Done v1.4.0</span>
+                    <span class="app-version">Done v1.5.0</span>
                     <span class="app-credit">Designed for Focus</span>
                 </div>
             </div>
@@ -238,9 +238,9 @@ class DoneApp {
             const index = order.indexOf(this.mode);
             if (Math.abs(diff) > 40) {
                 if (diff > 0 && index > 0) {
-                    this.setMode(order[index - 1]); // Swipe Right -> Left Item
+                    this.selectMode(order[index - 1]); // Swipe Right -> Left Item
                 } else if (diff < 0 && index < order.length - 1) {
-                    this.setMode(order[index + 1]); // Swipe Left -> Right Item
+                    this.selectMode(order[index + 1]); // Swipe Left -> Right Item
                 } else {
                     this.updateNavUI(); // Snap back if no more items
                 }
@@ -248,6 +248,12 @@ class DoneApp {
                 this.updateNavUI(); // Snap back if not enough diff
             }
         }, { passive: true });
+
+        // Manual Click to "Pull Up" the page
+        bottomNav.addEventListener('click', (e) => {
+            this.activatePage();
+            this.haptic();
+        });
 
         // Input Handling
         input.addEventListener('keydown', e => {
@@ -302,23 +308,31 @@ class DoneApp {
 
     // --- Modes & UI ---
 
-    setMode(m) {
-        if (this.mode === m && m !== 0) return; // Already there, unless it's tasks where we might want to toggle input
-
-        if (this.mode === 0 && m === 0) {
-            this.toggleInput();
-            return;
-        }
-
+    selectMode(m) {
+        if (this.mode === m) return;
         this.mode = m;
         this.updateNavUI();
         this.haptic();
+    }
+
+    activatePage() {
+        // Handle current selected mode
+        if (this.mode === 0) {
+            this.toggleInput();
+            return;
+        }
 
         // Navigate - Close current overlays UI and open the one for the new mode
         document.querySelectorAll('.overlay-page').forEach(el => el.classList.remove('active'));
 
         if (this.mode === 1) this.openOverlay('insightsOverlay');
         else if (this.mode === 2) this.openOverlay('settingsOverlay');
+    }
+
+    setMode(m) {
+        // Direct jump from a specific action (e.g. settings button in overlays)
+        this.selectMode(m);
+        this.activatePage();
     }
 
     updateNavUI() {
