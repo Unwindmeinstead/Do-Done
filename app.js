@@ -66,7 +66,13 @@ class DoneApp {
                         <span>${dateStr}</span>
                     </div>
                 </div>
-                <button class="delete-btn">✕</button>
+                </div>
+                <div class="task-actions">
+                    <button class="priority-dot-btn ${t.priority === 'high' ? 'high' : ''}" onclick="event.stopPropagation(); app.togglePriority(${t.id})">
+                        <div class="priority-dot"></div>
+                    </button>
+                    <button class="delete-btn" onclick="event.stopPropagation(); app.deleteTask(${t.id})">✕</button>
+                </div>
             </div>
         `}).join('');
     }
@@ -218,17 +224,14 @@ class DoneApp {
             }, 100); // Fast flash
         });
 
-        // Task List Delegation
+        // Task List Delegation - Simplified since buttons have inline handlers now
         list.addEventListener('click', e => {
-            // If input is active, close it (handled by global click, but let's ensure task interaction works)
-
             const item = e.target.closest('.task-item');
             if (!item) return;
             const id = parseInt(item.dataset.id);
 
-            if (e.target.classList.contains('delete-btn')) {
-                this.deleteTask(id);
-            } else {
+            // Only toggle completion if we didn't click actions (handled by stopPropagation above, but good to be safe)
+            if (!e.target.closest('.task-actions')) {
                 this.toggleTask(id);
             }
         });
@@ -371,6 +374,16 @@ class DoneApp {
         }
     }
 
+    togglePriority(id) {
+        const task = this.tasks.find(t => t.id === id);
+        if (task) {
+            task.priority = task.priority === 'high' ? 'normal' : 'high';
+            this.saveTasks();
+            this.renderTasks();
+            this.haptic();
+        }
+    }
+
     deleteTask(id) {
         if (confirm('Delete?')) {
             this.tasks = this.tasks.filter(t => t.id !== id);
@@ -392,12 +405,16 @@ class DoneApp {
         if (key === 'theme') {
             this.settings.theme = this.settings.theme === 'light' ? 'dark' : 'light';
             this.applyTheme();
+            this.saveSettings();
+            setTimeout(() => this.renderOverlays(), 300); // Delay re-render to let toggle animate
         } else if (this.settings.hasOwnProperty(key)) {
             this.settings[key] = !this.settings[key];
             if (key === 'haptics' && this.settings.haptics) this.haptic();
+            this.saveSettings();
+            // Do NOT re-render overlays immediately for simple toggles, 
+            // causing the DOM to be replaced and animation to break.
+            // The checkbox state is already updated by the user click.
         }
-        this.saveSettings();
-        this.renderOverlays(); // Re-render to show updated toggle state
     }
 
     applyTheme() {

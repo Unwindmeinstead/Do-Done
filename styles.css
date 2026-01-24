@@ -178,30 +178,69 @@ body {
     position: absolute;
 }
 
-/* Light Mode Support */
+/* Light Mode Support - Robust */
 [data-theme="light"] {
-    --bg-primary: #f2f2f7;
+    --bg-primary: #ffffff;
     --text-primary: #000000;
-    --text-tertiary: rgba(0, 0, 0, 0.4);
-    --input-bg: #ffffff;
-    --item-border: rgba(0, 0, 0, 0.1);
+    --text-tertiary: #8e8e93;
+    --input-bg: #f2f2f7;
+    --item-border: #e5e5ea;
+    --danger: #ff3b30;
 }
 
+[data-theme="light"] body,
+[data-theme="light"] #app,
 [data-theme="light"] .minimal-input-container,
+[data-theme="light"] .overlay-page,
+[data-theme="light"] .setting-item,
 [data-theme="light"] .settings-group,
-[data-theme="light"] .stat-card,
-[data-theme="light"] .overlay-page {
-    background: #ffffff;
-    color: #000000;
+[data-theme="light"] .stat-card {
+    background: var(--bg-primary);
+    color: var(--text-primary);
 }
 
-[data-theme="light"] .task-item {
+[data-theme="light"] .minimal-input-container {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .task-item,
+[data-theme="light"] .setting-item {
     border-bottom-color: var(--item-border);
 }
 
+[data-theme="light"] .setting-item:active {
+    background: #f2f2f7;
+}
+
+[data-theme="light"] .task-input-div,
 [data-theme="light"] #taskInput {
     color: #000000;
 }
+
+[data-theme="light"] .action-button {
+    background: #000000;
+}
+
+[data-theme="light"] .action-button svg {
+    stroke: #ffffff;
+}
+
+[data-theme="light"] .submit-arrow {
+    background: #f2f2f7;
+    color: #000000;
+}
+
+[data-theme="light"] .ios-toggle {
+    background: #e5e5ea;
+}
+
+[data-theme="light"] input:checked+.ios-toggle {
+    background: #34c759;
+    /* Apple Green */
+}
+
 
 /* Minimal Input Bar - Floating & Subtle */
 .minimal-input-container {
@@ -209,19 +248,17 @@ body {
     bottom: calc(16px + env(safe-area-inset-bottom));
     left: 16px;
     right: 16px;
-    background: var(--bg-primary);
-    /* Blend with background */
+    background: rgba(28, 28, 30, 0.8);
+    /* Dark glass default */
     backdrop-filter: blur(20px);
-    /* Subtle glass effect if over content */
     border-radius: 24px;
     padding: 12px 16px;
     display: flex;
     align-items: center;
     gap: 12px;
     z-index: 200;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    /* Slightly clearer border since bg is dark */
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    border: 0.5px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     transform: translateY(20px);
     opacity: 0;
     pointer-events: none;
@@ -229,7 +266,7 @@ body {
 }
 
 .minimal-input-container.typing {
-    border-color: #ffffff;
+    border-color: var(--text-primary);
 }
 
 .minimal-input-container.active {
@@ -268,10 +305,7 @@ body {
     opacity: 0.5;
     pointer-events: none;
     display: block;
-    /* Ensure it shows up */
 }
-
-/* Hide actual text node when empty if needed, usually :empty handles it */
 
 /* Submit Arrow */
 .submit-arrow {
@@ -297,12 +331,7 @@ body {
 }
 
 .submit-arrow:active {
-    background: var(--text-primary);
     transform: scale(0.9);
-}
-
-.submit-arrow:active svg {
-    stroke: var(--bg-primary);
 }
 
 /* Task List */
@@ -315,23 +344,17 @@ body {
 .task-item {
     display: flex;
     align-items: center;
-    padding: 20px 0;
-    /* Adjusted padding */
+    padding: 16px 0;
     border-bottom: none;
-    /* Removed border */
     position: relative;
-    /* transition: background 0.2s; */
-}
-
-/* Optional: Add hover/active state on task for feedback since border is gone */
-.task-item:active {
-    opacity: 0.7;
+    min-height: 60px;
 }
 
 .task-checkbox {
-    width: 24px;
-    height: 24px;
-    border: 2px solid #444;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--text-tertiary);
+    /* Softer border */
     border-radius: 50%;
     margin-right: 16px;
     flex-shrink: 0;
@@ -340,8 +363,8 @@ body {
 }
 
 .task-checkbox.checked {
-    background: #333;
-    border-color: #333;
+    background: var(--text-primary);
+    border-color: var(--text-primary);
 }
 
 .task-content {
@@ -349,12 +372,13 @@ body {
     flex-direction: column;
     flex: 1;
     overflow: hidden;
+    margin-right: 12px;
 }
 
 .task-text {
     font-size: 16px;
     transition: opacity 0.2s ease;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     display: block;
 }
 
@@ -363,14 +387,15 @@ body {
     color: var(--text-tertiary);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    font-weight: 500;
 }
 
 .meta-priority {
     color: var(--danger);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .task-item.completed .task-text {
@@ -378,16 +403,61 @@ body {
     text-decoration: line-through;
 }
 
-/* Removed old priority-mark class as it's now in metadata */
+/* Right Side Actions */
+.task-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
+/* Priority Dot Button */
+.priority-dot-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
 
+.priority-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-tertiary);
+    /* Default Gray */
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.priority-dot-btn.high .priority-dot {
+    background: var(--danger);
+    width: 10px;
+    height: 10px;
+    box-shadow: 0 0 8px rgba(255, 59, 48, 0.4);
+}
+
+/* Delete X Button */
 .delete-btn {
-    opacity: 0;
-    padding: 10px;
-    color: var(--danger);
+    opacity: 0.3;
+    /* Always visible but subtle */
+    padding: 8px;
+    color: var(--text-tertiary);
     background: transparent;
     border: none;
-    transition: opacity 0.2s;
+    font-size: 18px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.delete-btn:active,
+.delete-btn:hover {
+    opacity: 1;
+    color: var(--danger);
+    transform: scale(1.1);
 }
 
 .task-item:active .delete-btn {
