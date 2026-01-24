@@ -99,18 +99,22 @@ body {
     z-index: 1000;
     opacity: 0;
     pointer-events: none;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     width: 80%;
+    filter: blur(5px);
 }
 
 .task-splash.active {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+    filter: blur(0);
 }
 
 .task-splash.exit {
     opacity: 0;
-    transform: translate(-50%, -60%) scale(0.95);
+    transform: translate(-50%, -150%) scale(0.9);
+    filter: blur(2px);
 }
 
 .overlay-page.active {

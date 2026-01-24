@@ -370,17 +370,11 @@ class DoneApp {
         this.showSplash(text);
         this.haptic();
 
-        // Delay addition to list
+        // Faster commit to list
         setTimeout(() => {
             this.commitTask(text);
-            // Re-focus if user wants to type more? User asked for "center... then top". 
-            // Usually re-focusing after blur is annoying if unexpected, but for "rapid" it might be needed.
-            // Let's keep it blurred to enjoy the "Done" feeling, or focus if needed.
-            // Given "quickly entering", maybe we shouldn't blur? 
-            // But if we don't blur, the keyboard hides the center splash (on small phones).
-            // Let's NOT blur, keep it fast.
             document.getElementById('taskInput').focus();
-        }, 600);
+        }, 350);
     }
 
     commitTask(text) {
@@ -416,7 +410,7 @@ class DoneApp {
         setTimeout(() => {
             el.classList.add('exit');
             el.classList.remove('active');
-        }, 500);
+        }, 300); // Shorter display time
     }
 
     toggleTask(id) {
