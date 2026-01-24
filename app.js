@@ -241,11 +241,8 @@ class DoneApp {
             }
         });
 
-        // Toggle Priority
-        document.getElementById('priorityToggle').addEventListener('click', (e) => {
-            e.target.classList.toggle('high');
-            this.haptic();
-        });
+        // Submit Button
+        document.getElementById('submitBtn').addEventListener('click', () => this.addTask());
     }
 
     // --- Modes & UI ---
@@ -305,11 +302,15 @@ class DoneApp {
         this.saveTasks();
         this.renderTasks();
         input.value = '';
-        // Keep input open for multiple entries
-        // this.toggleInput(); 
 
-        // Reset priority
-        document.getElementById('priorityToggle').classList.remove('high');
+        // Flash input to signal success
+        input.classList.remove('typing');
+
+        // Recalculate overlays if open (live update)
+        if (document.querySelector('.overlay-page.active')) {
+            this.renderOverlays();
+        }
+
         this.haptic();
     }
 
