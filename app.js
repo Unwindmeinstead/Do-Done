@@ -53,14 +53,21 @@ class DoneApp {
             return b.id - a.id;
         });
 
-        list.innerHTML = sorted.map(t => `
+        list.innerHTML = sorted.map(t => {
+            const dateStr = new Date(t.id).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            return `
             <div class="task-item ${t.completed ? 'completed' : ''}" data-id="${t.id}">
                 <div class="task-checkbox ${t.completed ? 'checked' : ''}"></div>
-                <span class="task-text">${this.escape(t.text)}</span>
-                ${t.priority === 'high' && !t.completed ? '<div class="priority-mark"></div>' : ''}
+                <div class="task-content">
+                    <span class="task-text">${this.escape(t.text)}</span>
+                    <div class="task-meta">
+                        ${t.priority === 'high' ? '<span class="meta-priority">High Priority</span> • ' : ''}
+                        <span>${dateStr}</span>
+                    </div>
+                </div>
                 <button class="delete-btn">✕</button>
             </div>
-        `).join('');
+        `}).join('');
     }
 
     renderOverlays() {
@@ -171,6 +178,8 @@ class DoneApp {
 
         // Task List Delegation
         list.addEventListener('click', e => {
+            // If input is active, close it (handled by global click, but let's ensure task interaction works)
+
             const item = e.target.closest('.task-item');
             if (!item) return;
             const id = parseInt(item.dataset.id);
@@ -179,6 +188,20 @@ class DoneApp {
                 this.deleteTask(id);
             } else {
                 this.toggleTask(id);
+            }
+        });
+
+        // Global Click to close input
+        document.addEventListener('click', (e) => {
+            // If input is not active, ignore
+            if (!this.inputActive) return;
+
+            const isClickInsideInput = document.getElementById('inputContainer').contains(e.target);
+            const isClickOnActionButton = document.getElementById('actionButton').contains(e.target);
+
+            // If passed the checks, close it
+            if (!isClickInsideInput && !isClickOnActionButton) {
+                this.toggleInput();
             }
         });
 
@@ -208,9 +231,13 @@ class DoneApp {
         if (isActive) {
             bar.classList.remove('active');
             document.getElementById('taskInput').blur();
+            document.getElementById('bottomNav').classList.remove('hidden');
+            this.inputActive = false;
         } else {
             bar.classList.add('active');
+            document.getElementById('bottomNav').classList.add('hidden');
             setTimeout(() => document.getElementById('taskInput').focus(), 100);
+            this.inputActive = true;
         }
     }
 
@@ -242,7 +269,8 @@ class DoneApp {
         this.saveTasks();
         this.renderTasks();
         input.value = '';
-        this.toggleInput(); // Close input
+        // Keep input open for multiple entries
+        // this.toggleInput(); 
 
         // Reset priority
         document.getElementById('priorityToggle').classList.remove('high');
