@@ -406,13 +406,16 @@ class DoneApp {
         }
 
         el.innerText = text;
-        el.classList.remove('exit');
-        requestAnimationFrame(() => el.classList.add('active'));
+        el.classList.remove('active', 'exit');
+        void el.offsetWidth; // Force reflow to pulse animation
 
+        el.classList.add('active');
+
+        // Allow animation to be seen - extended to 800ms
         setTimeout(() => {
-            el.classList.add('exit');
             el.classList.remove('active');
-        }, 300); // Shorter display time
+            el.classList.add('exit');
+        }, 800);
     }
 
     toggleTask(id) {
