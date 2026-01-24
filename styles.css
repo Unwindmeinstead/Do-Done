@@ -136,43 +136,84 @@ body {
     position: absolute;
 }
 
-/* Minimal Input Bar - Seamless */
+/* Light Mode Support */
+[data-theme="light"] {
+    --bg-primary: #f2f2f7;
+    --text-primary: #000000;
+    --text-tertiary: rgba(0, 0, 0, 0.4);
+    --input-bg: #ffffff;
+    --item-border: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .minimal-input-container,
+[data-theme="light"] .settings-group,
+[data-theme="light"] .stat-card,
+[data-theme="light"] .overlay-page {
+    background: #ffffff;
+    color: #000000;
+}
+
+[data-theme="light"] .task-item {
+    border-bottom-color: var(--item-border);
+}
+
+[data-theme="light"] #taskInput {
+    color: #000000;
+}
+
+/* Minimal Input Bar - Floating & Subtle */
 .minimal-input-container {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #111;
-    /* Slightly lighter than black to differentiate */
-    padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+    bottom: 20px;
+    /* Floating above keyboard/bottom */
+    left: 20px;
+    right: 20px;
+    background: #1c1c1e;
+    /* iOS Dark Grey */
+    border-radius: 20px;
+    /* Rounded corners */
+    padding: 12px 16px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     z-index: 200;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
-    transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    transform: translateY(120%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), bottom 0.3s ease;
 }
 
 .minimal-input-container.active {
     transform: translateY(0);
+    /* When active, it stays floating but keyboard pushes view, handled by browser usually
+       or we let it sit there. User wants "seamless" but also "rounded/subtle".
+       Floating pill shape is requested now. */
 }
 
 #taskInput {
     flex: 1;
     background: transparent;
     border: none;
-    color: white;
-    font-size: 18px;
-    /* Larger font */
+    color: var(--text-tertiary);
+    /* Default to dim */
+    font-size: 16px;
     font-family: inherit;
     outline: none;
     padding: 0;
+    transition: color 0.5s ease;
+    /* Slow fade back */
+}
+
+#taskInput.typing {
+    color: var(--text-primary);
+    /* Bright white/black on type */
+    transition: none;
+    /* Instant change */
 }
 
 #taskInput::placeholder {
     color: var(--text-tertiary);
+    opacity: 0.5;
 }
 
 /* Priority Dot - Larger & Better Placed */

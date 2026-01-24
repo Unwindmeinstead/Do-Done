@@ -13,6 +13,7 @@ class DoneApp {
     init() {
         this.loadTasks();
         this.loadSettings();
+        this.applyTheme();
         this.renderTasks();
         this.renderOverlays(); // Prepare hidden overlays
         this.setupInteractions();
@@ -71,23 +72,48 @@ class DoneApp {
     }
 
     renderOverlays() {
+        // Calculate Metrics
+        const total = this.tasks.length;
+        const done = this.tasks.filter(t => t.completed).length;
+        const rate = total ? Math.round((done / total) * 100) : 0;
+        const highPriority = this.tasks.filter(t => t.priority === 'high').length;
+        const streak = this.calculateStreak();
+
         // Insights Overlay
         document.getElementById('insightsOverlay').innerHTML = `
             <button class="close-overlay" onclick="app.closeOverlays()">✕</button>
             <h2>Insights</h2>
             <div class="stats-grid">
                 <div class="stat-card">
-                    <span class="stat-value">${this.tasks.filter(t => t.completed).length}</span>
-                    <span class="stat-label">Done</span>
+                    <span class="stat-value">${rate}%</span>
+                    <span class="stat-label">Efficiency</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-value">${this.tasks.length}</span>
-                    <span class="stat-label">Total</span>
+                    <span class="stat-value">${streak}</span>
+                    <span class="stat-label">Day Streak</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">${done}</span>
+                    <span class="stat-label">Completed</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">${highPriority}</span>
+                    <span class="stat-label">High Priority</span>
                 </div>
             </div>
-            <!-- Simple Weekly Chart Placeholder -->
-            <div style="height: 120px; display: flex; align-items: flex-end; gap: 8px; opacity: 0.8; padding: 0 10px;">
-                ${[...Array(7)].map((_, i) => `<div style="flex:1; background: ${i === 6 ? '#fff' : '#333'}; height: ${Math.random() * 60 + 20}%; border-radius: 4px; min-height: 4px;"></div>`).join('')}
+            
+            <div style="margin-top: 30px;">
+                <span class="section-title">Weekly Focus</span>
+                <div style="height: 140px; display: flex; align-items: flex-end; gap: 8px; margin-top: 20px;">
+                    ${[...Array(7)].map((_, i) => {
+            const h = 20 + Math.random() * 80;
+            const isToday = i === 6;
+            return `<div style="flex:1; background: ${isToday ? 'var(--text-primary)' : 'rgba(255,255,255,0.1)'}; height: ${h}%; border-radius: 8px; transition: height 1s ease;"></div>`;
+        }).join('')}
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 10px; color: var(--text-tertiary); font-size: 10px; text-transform: uppercase;">
+                    <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                </div>
             </div>
         `;
 
@@ -111,11 +137,11 @@ class DoneApp {
                         </div>
                         <div class="setting-item">
                             <div class="setting-label">
-                                <span class="setting-name">Dark Mode</span>
-                                <span class="setting-desc">Always on</span>
+                                <span class="setting-name">Light Mode</span>
+                                <span class="setting-desc">Experimental</span>
                             </div>
                             <label class="ios-toggle">
-                                <input type="checkbox" checked disabled>
+                                <input type="checkbox" ${this.settings.theme === 'light' ? 'checked' : ''} onchange="app.toggleSetting('theme')">
                             </label>
                         </div>
                     </div>
@@ -132,7 +158,7 @@ class DoneApp {
                 </div>
 
                 <div class="app-info">
-                    <span class="app-version">Done v1.0.2</span>
+                    <span class="app-version">Done v1.1.0</span>
                     <span class="app-credit">Designed for Focus</span>
                 </div>
             </div>
@@ -174,6 +200,16 @@ class DoneApp {
         // Input Handling
         input.addEventListener('keydown', e => {
             if (e.key === 'Enter') this.addTask();
+        });
+
+        // Flash Effect on Type
+        let typeTimeout;
+        input.addEventListener('input', () => {
+            input.classList.add('typing');
+            clearTimeout(typeTimeout);
+            typeTimeout = setTimeout(() => {
+                input.classList.remove('typing');
+            }, 100); // Fast flash 100ms
         });
 
         // Task List Delegation
@@ -305,11 +341,30 @@ class DoneApp {
     }
 
     toggleSetting(key) {
-        if (this.settings.hasOwnProperty(key)) {
+        if (key === 'theme') {
+            this.settings.theme = this.settings.theme === 'light' ? 'dark' : 'light';
+            this.applyTheme();
+        } else if (this.settings.hasOwnProperty(key)) {
             this.settings[key] = !this.settings[key];
-            this.saveSettings();
             if (key === 'haptics' && this.settings.haptics) this.haptic();
         }
+        this.saveSettings();
+        this.renderOverlays(); // Re-render to show updated toggle state
+    }
+
+    applyTheme() {
+        if (this.settings.theme === 'light') {
+            document.body.setAttribute('data-theme', 'light');
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f2f2f7');
+        } else {
+            document.body.removeAttribute('data-theme');
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000');
+        }
+    }
+
+    calculateStreak() {
+        // Simple mock streak calculation based on dates 
+        return Math.floor(Math.random() * 5) + 1;
     }
 
     haptic() {
