@@ -377,8 +377,14 @@ body {
     font-weight: 500;
 }
 
-.meta-priority {
+.meta-priority.high {
     color: var(--danger);
+    font-weight: 700;
+}
+
+.meta-priority.mid {
+    color: #FF9F0A;
+    /* iOS Orange */
     font-weight: 700;
 }
 
@@ -396,7 +402,7 @@ body {
     /* Push to far right */
 }
 
-/* Priority Dot Button */
+/* Priority Dot Button - 3 Tier Cycle */
 .priority-dot-btn {
     width: 36px;
     height: 36px;
@@ -408,6 +414,7 @@ body {
     background: rgba(255, 255, 255, 0.05);
     /* Slightly more visible background */
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .priority-dot {
@@ -415,15 +422,26 @@ body {
     height: 10px;
     border-radius: 50%;
     background: var(--text-tertiary);
+    /* Grey - Normal */
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.priority-dot-btn.high .priority-dot {
+.priority-dot-btn.p-medium .priority-dot {
+    background: #FF9F0A;
+    /* Orange - Mid */
+    width: 11px;
+    height: 11px;
+    box-shadow: 0 0 10px rgba(255, 159, 10, 0.4);
+}
+
+.priority-dot-btn.p-high .priority-dot {
     background: var(--danger);
+    /* Red - High */
     width: 12px;
     height: 12px;
-    box-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
+    box-shadow: 0 0 12px rgba(255, 59, 48, 0.5);
 }
+
 
 /* Delete X Button */
 .delete-btn {
