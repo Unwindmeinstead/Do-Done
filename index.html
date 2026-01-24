@@ -1,4 +1,4 @@
-<!-- Done PWA - Minimal To-Do App -->
+<!-- Done PWA -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,62 +6,38 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Done">
-    <meta name="theme-color" content="#000000">
-    <meta name="description" content="Done - A minimal, powerful to-do app.">
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icons/icon-192.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <title>Done</title>
     <link rel="stylesheet" href="styles.css">
+    <title>Done</title>
 </head>
 
 <body>
     <div id="app">
-        <div class="status-bar-spacer"></div>
-
-        <main class="main-content">
-            <div class="menu-container" id="menuContainer">
-                <div class="menu-track" id="menuTrack">
-                    <section class="page" id="tasksPage"></section>
-                    <section class="page" id="insightsPage"></section>
-                    <section class="page" id="settingsPage"></section>
-                </div>
-            </div>
-
+        <!-- Main Task View -->
+        <main class="main-content" id="tasksList">
+            <!-- Tasks injected here -->
         </main>
-        <nav class="bottom-nav" id="bottomNav">
-            <div class="nav-container">
-                <button class="action-button" id="actionButton" aria-label="Add task">
-                    <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <path d="M5 12l5 5L20 7" />
-                    </svg>
-                    <svg class="icon-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
-                        <path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" />
-                    </svg>
-                    <div class="mic-pulse"></div>
-                </button>
-            </div>
 
+        <!-- Overlays -->
+        <div id="insightsOverlay" class="overlay-page"></div>
+        <div id="settingsOverlay" class="overlay-page"></div>
+
+        <!-- Floating Input Bar -->
+        <div class="minimal-input-container" id="inputContainer">
+            <input type="text" id="taskInput" placeholder="Type a task..." autocomplete="off">
+            <div class="priority-toggle" id="priorityToggle"></div>
+        </div>
+
+        <!-- Bottom Action Button -->
+        <nav class="bottom-nav" id="bottomNav">
+            <button class="action-button" id="actionButton">
+                <!-- Icon injected by JS -->
+            </button>
         </nav>
-        <div class="modal" id="taskModal">
-            <div class="modal-backdrop" id="modalBackdrop"></div>
-            <div class="modal-content" id="modalContent"></div>
-        </div>
-        <div class="voice-indicator" id="voiceIndicator">
-            <div class="voice-waves"><span></span><span></span><span></span><span></span><span></span></div>
-            <p>Listening...</p>
-        </div>
-        <div class="toast-container" id="toastContainer"></div>
-        <input type="file" id="fileInput" accept=".json" style="display: none;">
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="app.js"></script>
 </body>
 
