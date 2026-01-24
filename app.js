@@ -17,7 +17,7 @@ class DoneApp {
         this.renderTasks();
         this.renderOverlays(); // Prepare hidden overlays
         this.setupInteractions();
-        this.updateButtonIcon();
+        setTimeout(() => this.updateNavUI(), 100);
     }
 
     loadTasks() {
@@ -150,32 +150,19 @@ class DoneApp {
     // --- Interactions ---
 
     setupInteractions() {
-        const btn = document.getElementById('actionButton');
         const inputContainer = document.getElementById('inputContainer');
         const input = document.getElementById('taskInput');
         const list = document.getElementById('tasksList');
-
-        // Button Click Logic
-        btn.addEventListener('click', () => {
-            if (this.mode === 0) this.toggleInput();
-            if (this.mode === 1) this.openOverlay('insightsOverlay');
-            if (this.mode === 2) this.openOverlay('settingsOverlay');
-            this.haptic();
-        });
+        const bottomNav = document.getElementById('bottomNav');
 
         // Swipe on Button Area
         let startX = 0;
-        const bottomNav = document.getElementById('bottomNav');
-
         bottomNav.addEventListener('touchstart', e => startX = e.touches[0].clientX, { passive: true });
         bottomNav.addEventListener('touchend', e => {
             const diff = e.changedTouches[0].clientX - startX;
-            if (Math.abs(diff) > 30) {
-                if (diff > 0 && this.mode > 0) this.mode--; // Swipe Right -> Left Mode
-                else if (diff < 0 && this.mode < 2) this.mode++; // Swipe Left -> Right Mode
-
-                this.updateButtonIcon();
-                this.haptic();
+            if (Math.abs(diff) > 40) {
+                if (diff > 0 && this.mode > 0) this.setMode(this.mode - 1);
+                else if (diff < 0 && this.mode < 2) this.setMode(this.mode + 1);
             }
         }, { passive: true });
 
@@ -218,10 +205,10 @@ class DoneApp {
             if (!this.inputActive) return;
 
             const isClickInsideInput = document.getElementById('inputContainer').contains(e.target);
-            const isClickOnActionButton = document.getElementById('actionButton').contains(e.target);
+            const isClickOnNav = document.getElementById('bottomNav').contains(e.target);
 
             // If passed the checks, close it
-            if (!isClickInsideInput && !isClickOnActionButton) {
+            if (!isClickInsideInput && !isClickOnNav) {
                 this.toggleInput();
             }
         });
@@ -232,14 +219,51 @@ class DoneApp {
 
     // --- Modes & UI ---
 
-    updateButtonIcon() {
-        const icons = [
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>', // Check
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-6"/></svg>', // Chart
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>' // Gear
+    setMode(m) {
+        if (this.mode === m && m !== 0) return; // Already there, unless it's tasks where we might want to toggle input
+
+        if (this.mode === 0 && m === 0) {
+            this.toggleInput();
+            return;
+        }
+
+        this.mode = m;
+        this.updateNavUI();
+        this.haptic();
+
+        // Navigate - Close current overlays UI and open the one for the new mode
+        document.querySelectorAll('.overlay-page').forEach(el => el.classList.remove('active'));
+
+        if (this.mode === 1) this.openOverlay('insightsOverlay');
+        else if (this.mode === 2) this.openOverlay('settingsOverlay');
+    }
+
+    updateNavUI() {
+        // Update active class on items
+        document.querySelectorAll('.nav-item').forEach(el => {
+            el.classList.toggle('active', parseInt(el.dataset.mode) === this.mode);
+        });
+
+        // Move indicator
+        const indicator = document.getElementById('navIndicator');
+        const items = [
+            document.getElementById('navInsights'),
+            document.getElementById('navTasks'),
+            document.getElementById('navSettings')
         ];
 
-        document.getElementById('actionButton').innerHTML = icons[this.mode];
+        // The modes are 0:Tasks, 1:Insights, 2:Settings. 
+        // In HTML they are ordered: Insights (1), Tasks (0), Settings (2)
+        const order = [1, 0, 2];
+        const index = order.indexOf(this.mode);
+
+        if (indicator) {
+            const track = document.getElementById('navTrack');
+            const trackWidth = track.offsetWidth || 204; // Fallback if not yet rendered
+            const itemWidth = (trackWidth) / 3;
+            indicator.style.width = `${itemWidth}px`;
+            indicator.style.transform = `translateX(${index * itemWidth}px)`;
+        }
     }
 
     toggleInput() {
@@ -271,6 +295,8 @@ class DoneApp {
 
     closeOverlays() {
         document.querySelectorAll('.overlay-page').forEach(el => el.classList.remove('active'));
+        this.mode = 0;
+        this.updateNavUI();
     }
 
     // --- Actions ---
