@@ -52,13 +52,10 @@ class DoneApp {
             return;
         }
 
-        // Sort: High > Mid > Normal > Completed
+        // Sort: High Priority > Normal > Completed
         const sorted = [...this.tasks].sort((a, b) => {
             if (a.completed !== b.completed) return a.completed ? 1 : -1;
-            const priorityWeight = { high: 2, medium: 1, normal: 0 };
-            const weightA = priorityWeight[a.priority] || 0;
-            const weightB = priorityWeight[b.priority] || 0;
-            if (weightA !== weightB) return weightB - weightA;
+            if (a.priority !== b.priority) return a.priority === 'high' ? -1 : 1;
             return b.id - a.id;
         });
 
@@ -70,12 +67,12 @@ class DoneApp {
                 <div class="task-content">
                     <span class="task-text">${this.escape(t.text)}</span>
                     <div class="task-meta">
-                        ${t.priority === 'high' ? '<span class="meta-priority high">High Priority</span> • ' : t.priority === 'medium' ? '<span class="meta-priority mid">Medium</span> • ' : ''}
+                        ${t.priority === 'high' ? '<span class="meta-priority">High Priority</span> • ' : ''}
                         <span>${dateStr}</span>
                     </div>
                 </div>
                 <div class="task-actions">
-                    <button class="priority-dot-btn p-${t.priority}" onclick="event.stopPropagation(); app.togglePriority(${t.id})">
+                    <button class="priority-dot-btn ${t.priority === 'high' ? 'high' : ''}" onclick="event.stopPropagation(); app.togglePriority(${t.id})">
                         <div class="priority-dot"></div>
                     </button>
                     <button class="delete-btn" onclick="event.stopPropagation(); app.deleteTask(${t.id})">✕</button>
@@ -196,7 +193,7 @@ class DoneApp {
                 </div>
 
                 <div class="app-info">
-                    <span class="app-version">Done v1.3.0</span>
+                    <span class="app-version">Done v1.2.0</span>
                     <span class="app-credit">Designed for Focus</span>
                 </div>
             </div>
@@ -295,17 +292,31 @@ class DoneApp {
     }
 
     updateNavUI() {
-        const track = document.getElementById('navTrack');
-        if (!track) return;
+        // Update active class on items
+        document.querySelectorAll('.nav-item').forEach(el => {
+            el.classList.toggle('active', parseInt(el.dataset.mode) === this.mode);
+        });
 
-        // Modes: 0:Tasks, 1:Insights, 2:Settings
-        // HTML Order: 1 (index 0), 0 (index 1), 2 (index 2)
+        // Move indicator
+        const indicator = document.getElementById('navIndicator');
+        const items = [
+            document.getElementById('navInsights'),
+            document.getElementById('navTasks'),
+            document.getElementById('navSettings')
+        ];
+
+        // The modes are 0:Tasks, 1:Insights, 2:Settings. 
+        // In HTML they are ordered: Insights (1), Tasks (0), Settings (2)
         const order = [1, 0, 2];
         const index = order.indexOf(this.mode);
 
-        // Push the track to reveal the correct item (offset by item width)
-        const shift = index * -72;
-        track.style.transform = `translateX(${shift}px)`;
+        if (indicator) {
+            const track = document.getElementById('navTrack');
+            const trackWidth = track.offsetWidth || 204; // Fallback if not yet rendered
+            const itemWidth = (trackWidth) / 3;
+            indicator.style.width = `${itemWidth}px`;
+            indicator.style.transform = `translateX(${index * itemWidth}px)`;
+        }
     }
 
     toggleInput() {
@@ -392,16 +403,13 @@ class DoneApp {
         }
 
         el.innerText = text;
-        el.classList.remove('active', 'exit');
-        void el.offsetWidth; // Force reflow to pulse animation
+        el.classList.remove('exit');
+        requestAnimationFrame(() => el.classList.add('active'));
 
-        el.classList.add('active');
-
-        // Allow animation to be seen - extended to 800ms
         setTimeout(() => {
-            el.classList.remove('active');
             el.classList.add('exit');
-        }, 800);
+            el.classList.remove('active');
+        }, 300); // Shorter display time
     }
 
     toggleTask(id) {
@@ -417,10 +425,7 @@ class DoneApp {
     togglePriority(id) {
         const task = this.tasks.find(t => t.id === id);
         if (task) {
-            const cycle = ['normal', 'medium', 'high'];
-            let idx = cycle.indexOf(task.priority);
-            task.priority = cycle[(idx + 1) % cycle.length];
-
+            task.priority = task.priority === 'high' ? 'normal' : 'high';
             this.saveTasks();
             this.renderTasks();
             this.haptic();
