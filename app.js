@@ -66,7 +66,6 @@ class DoneApp {
                         <span>${dateStr}</span>
                     </div>
                 </div>
-                </div>
                 <div class="task-actions">
                     <button class="priority-dot-btn ${t.priority === 'high' ? 'high' : ''}" onclick="event.stopPropagation(); app.togglePriority(${t.id})">
                         <div class="priority-dot"></div>
