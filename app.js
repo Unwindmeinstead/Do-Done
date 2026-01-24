@@ -441,20 +441,38 @@ class DoneApp {
     }
 
     deleteTask(id) {
-        if (confirm('Delete?')) {
+        this.openConfirm('Delete this task?', () => {
             this.tasks = this.tasks.filter(t => t.id !== id);
             this.saveTasks();
             this.renderTasks();
-        }
+            this.closeConfirm();
+            this.haptic();
+        });
+    }
+
+    openConfirm(msg, onConfirm) {
+        const modal = document.getElementById('confirmModal');
+        const btn = document.getElementById('confirmActionBtn');
+        document.getElementById('confirmMessage').innerText = msg;
+
+        modal.classList.add('active');
+        btn.onclick = onConfirm;
+        this.haptic();
+    }
+
+    closeConfirm() {
+        document.getElementById('confirmModal').classList.remove('active');
     }
 
     clearData() {
-        if (confirm('Clear all tasks?')) {
+        this.openConfirm('Clear all data?', () => {
             this.tasks = [];
             this.saveTasks();
             this.renderTasks();
+            this.closeConfirm();
             this.closeOverlays();
-        }
+            this.haptic();
+        });
     }
 
     toggleSetting(key) {

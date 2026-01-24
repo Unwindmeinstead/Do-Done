@@ -24,6 +24,15 @@
         <!-- Overlays -->
         <div id="insightsOverlay" class="overlay-page"></div>
         <div id="settingsOverlay" class="overlay-page"></div>
+        <div id="confirmModal" class="modal-overlay">
+            <div class="modal-content">
+                <span id="confirmMessage">Delete?</span>
+                <div class="modal-actions">
+                    <button class="modal-btn secondary" onclick="app.closeConfirm()">Cancel</button>
+                    <button class="modal-btn primary danger" id="confirmActionBtn">Delete</button>
+                </div>
+            </div>
+        </div>
 
         <!-- Floating Input Bar -->
         <div class="minimal-input-container" id="inputContainer">
