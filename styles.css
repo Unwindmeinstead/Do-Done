@@ -217,40 +217,39 @@ body {
 }
 
 
-/* Minimal Input Bar - Seamless & Blended */
+/* Minimal Input Bar - Typewriter Aesthetic */
 .minimal-input-container {
     position: fixed;
     bottom: calc(env(safe-area-inset-bottom) + 12px);
     left: 16px;
     right: 16px;
     background: transparent;
-    /* Fully blended */
     backdrop-filter: blur(35px) saturate(180%);
     -webkit-backdrop-filter: blur(35px) saturate(180%);
-    border-radius: 22px;
-    padding: 14px 20px;
+    border-radius: 0;
+    padding: 14px 4px;
     display: flex;
     align-items: center;
     gap: 14px;
     z-index: 2000;
     border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+    /* Subtle base guide */
     box-shadow: none;
-    /* No shadow for seamless feel */
     transform: translateY(20px);
     opacity: 0;
     pointer-events: none;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
         opacity 0.4s ease,
-        background 0.1s ease;
+        border-bottom 0.2s ease;
 }
 
-/* Pitch White Flash Effect */
+/* Typewriter Underline Animation */
 .minimal-input-container.typing {
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2),
-        inset 0 0 0 1.5px rgba(255, 255, 255, 1);
+    border-bottom: 2px solid rgba(255, 255, 255, 1);
     transition: none;
 }
+
 
 
 .minimal-input-container.active {
