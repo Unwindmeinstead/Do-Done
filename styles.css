@@ -217,32 +217,46 @@ body {
 }
 
 
-/* Minimal Input Bar - Positioned Lower */
+/* Minimal Input Bar - Seamless & Responsive */
 .minimal-input-container {
     position: fixed;
-    bottom: calc(env(safe-area-inset-bottom) + 4px);
-    /* Lowered even more */
-    left: 12px;
-    right: 12px;
-    background: rgba(44, 44, 46, 0.85);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border-radius: 20px;
-    padding: 12px 16px;
+    bottom: calc(env(safe-area-inset-bottom) + 12px);
+    /* Slightly higher for better thumb reach */
+    left: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    /* Much more subtle glass */
+    backdrop-filter: blur(35px) saturate(180%);
+    -webkit-backdrop-filter: blur(35px) saturate(180%);
+    border-radius: 22px;
+    padding: 14px 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    z-index: 200;
-    border: 0.5px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    gap: 14px;
+    z-index: 2000;
+    /* Stays above nav */
+    border: none;
+    /* Removed border to make it seamless */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+        inset 0 0.5px 1px rgba(255, 255, 255, 0.1);
     transform: translateY(20px);
     opacity: 0;
     pointer-events: none;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.4s ease,
+        background 0.1s ease,
+        box-shadow 0.1s ease;
 }
 
+/* Pitch White Flash Effect */
 .minimal-input-container.typing {
-    border-color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.4);
+    /* Brighter base when typing */
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.3),
+        inset 0 0 0 1.5px rgba(255, 255, 255, 1);
+    /* Pitch white hairline flash */
+    transition: none;
+    /* Instant flash */
 }
 
 .minimal-input-container.active {
@@ -251,17 +265,16 @@ body {
     pointer-events: auto;
 }
 
-/* ContentEditable Input (No iOS Bar) */
+/* ContentEditable Input */
 .task-input-div {
     flex: 1;
     background: transparent;
     border: none;
-    color: var(--text-tertiary);
-    font-size: 16px;
-    font-family: inherit;
+    color: var(--text-primary);
+    font-size: 17px;
+    font-weight: 400;
     outline: none;
     padding: 0;
-    transition: color 0.5s ease;
     min-width: 50px;
     white-space: nowrap;
     overflow: hidden;
@@ -269,10 +282,6 @@ body {
     -webkit-user-select: text;
 }
 
-.task-input-div.typing {
-    color: var(--text-primary);
-    transition: none;
-}
 
 /* Placeholder for contenteditable */
 .task-input-div:empty:before {
