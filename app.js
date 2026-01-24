@@ -294,6 +294,29 @@ class DoneApp {
 
         if (!text) return;
 
+        // Visual Feedback Immediate
+        input.value = '';
+        input.classList.remove('typing');
+        document.getElementById('inputContainer').classList.remove('typing');
+        input.blur(); // Dismiss keyboard to show splash clearly
+
+        this.showSplash(text);
+        this.haptic();
+
+        // Delay addition to list
+        setTimeout(() => {
+            this.commitTask(text);
+            // Re-focus if user wants to type more? User asked for "center... then top". 
+            // Usually re-focusing after blur is annoying if unexpected, but for "rapid" it might be needed.
+            // Let's keep it blurred to enjoy the "Done" feeling, or focus if needed.
+            // Given "quickly entering", maybe we shouldn't blur? 
+            // But if we don't blur, the keyboard hides the center splash (on small phones).
+            // Let's NOT blur, keep it fast.
+            document.getElementById('taskInput').focus();
+        }, 600);
+    }
+
+    commitTask(text) {
         this.tasks.unshift({
             id: Date.now(),
             text,
@@ -303,18 +326,30 @@ class DoneApp {
 
         this.saveTasks();
         this.renderTasks();
-        input.value = '';
-
-        // Flash input to signal success
-        input.classList.remove('typing');
-        document.getElementById('inputContainer').classList.remove('typing');
 
         // Recalculate overlays if open (live update)
         if (document.querySelector('.overlay-page.active')) {
             this.renderOverlays();
         }
+    }
 
-        this.haptic();
+    showSplash(text) {
+        let el = document.getElementById('taskSplash');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'taskSplash';
+            el.className = 'task-splash';
+            document.body.appendChild(el);
+        }
+
+        el.innerText = text;
+        el.classList.remove('exit');
+        requestAnimationFrame(() => el.classList.add('active'));
+
+        setTimeout(() => {
+            el.classList.add('exit');
+            el.classList.remove('active');
+        }, 500);
     }
 
     toggleTask(id) {
