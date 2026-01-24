@@ -131,7 +131,8 @@ body {
 /* Minimal Input Bar */
 .minimal-input-container {
     position: fixed;
-    bottom: calc(var(--safe-bottom) + 100px);
+    bottom: calc(var(--safe-bottom) + 20px);
+    /* Lower default position */
     left: 20px;
     right: 20px;
     background: #1a1a1a;
@@ -151,6 +152,8 @@ body {
 
 .minimal-input-container.active {
     opacity: 1;
+    /* When active (keyboard open), stick to almost bottom */
+    bottom: 10px;
     transform: translateY(0) scale(1);
     pointer-events: auto;
 }
