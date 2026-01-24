@@ -143,8 +143,8 @@ body {
 /* Bottom Nav - Maximum Lower Position for iPhone Home Indicator */
 .bottom-nav {
     position: fixed;
-    bottom: calc(env(safe-area-inset-bottom) - 4px);
-    /* Tucked right above home indicator */
+    bottom: calc(env(safe-area-inset-bottom) + 24px);
+    /* Floating higher as requested */
     left: 50%;
     transform: translateX(-50%);
     width: 240px;
@@ -379,24 +379,26 @@ body {
     text-decoration: line-through;
 }
 
-/* Right Side Actions */
+/* Right Side Actions - Pinned to End */
 .task-actions {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding-left: 12px;
+    gap: 12px;
+    margin-left: auto;
+    /* Push to far right */
 }
 
 /* Priority Dot Button */
 .priority-dot-btn {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     border: none;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.05);
+    /* Slightly more visible background */
     cursor: pointer;
 }
 
@@ -417,14 +419,14 @@ body {
 
 /* Delete X Button */
 .delete-btn {
-    opacity: 0.5;
-    width: 32px;
-    height: 32px;
+    opacity: 0.6;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text-tertiary);
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 50%;
     border: none;
     font-size: 16px;
