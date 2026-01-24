@@ -495,16 +495,16 @@ class DoneApp {
 
     applyTheme() {
         if (this.settings.theme === 'light') {
-            document.body.setAttribute('data-theme', 'light');
+            document.documentElement.setAttribute('data-theme', 'light');
             document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff');
         } else if (this.settings.theme === 'dark') {
-            document.body.removeAttribute('data-theme');
+            document.documentElement.removeAttribute('data-theme');
             document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000');
         } else {
             // Auto - check system
             const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (isDark) document.body.removeAttribute('data-theme');
-            else document.body.setAttribute('data-theme', 'light');
+            if (isDark) document.documentElement.removeAttribute('data-theme');
+            else document.documentElement.setAttribute('data-theme', 'light');
             document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#000000' : '#ffffff');
         }
     }
