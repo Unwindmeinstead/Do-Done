@@ -295,31 +295,17 @@ class DoneApp {
     }
 
     updateNavUI() {
-        // Update active class on items
-        document.querySelectorAll('.nav-item').forEach(el => {
-            el.classList.toggle('active', parseInt(el.dataset.mode) === this.mode);
-        });
+        const track = document.getElementById('navTrack');
+        if (!track) return;
 
-        // Move indicator
-        const indicator = document.getElementById('navIndicator');
-        const items = [
-            document.getElementById('navInsights'),
-            document.getElementById('navTasks'),
-            document.getElementById('navSettings')
-        ];
-
-        // The modes are 0:Tasks, 1:Insights, 2:Settings. 
-        // In HTML they are ordered: Insights (1), Tasks (0), Settings (2)
+        // Modes: 0:Tasks, 1:Insights, 2:Settings
+        // HTML Order: 1 (index 0), 0 (index 1), 2 (index 2)
         const order = [1, 0, 2];
         const index = order.indexOf(this.mode);
 
-        if (indicator) {
-            const track = document.getElementById('navTrack');
-            const trackWidth = track.offsetWidth || 204; // Fallback if not yet rendered
-            const itemWidth = (trackWidth) / 3;
-            indicator.style.width = `${itemWidth}px`;
-            indicator.style.transform = `translateX(${index * itemWidth}px)`;
-        }
+        // Push the track to reveal the correct item (offset by item width)
+        const shift = index * -72;
+        track.style.transform = `translateX(${shift}px)`;
     }
 
     toggleInput() {
