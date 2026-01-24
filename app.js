@@ -85,47 +85,85 @@ class DoneApp {
     }
 
     renderOverlays() {
-        // Calculate Metrics
+        // Calculate Advanced Metrics
         const total = this.tasks.length;
-        const done = this.tasks.filter(t => t.completed).length;
+        const tasksDone = this.tasks.filter(t => t.completed);
+        const done = tasksDone.length;
         const rate = total ? Math.round((done / total) * 100) : 0;
         const highPriority = this.tasks.filter(t => t.priority === 'high').length;
+        const midPriority = this.tasks.filter(t => t.priority === 'medium').length;
         const streak = this.calculateStreak();
+
+        // New Derived Metrics
+        const productivityScore = tasksDone.reduce((acc, t) => {
+            const weights = { high: 10, medium: 5, normal: 2 };
+            return acc + (weights[t.priority] || 2);
+        }, 0);
+
+        const focusPoints = (done * 5) + (total * 1);
+        const estimatedTime = done * 25; // 25 mins per task avg
 
         // Insights Overlay
         document.getElementById('insightsOverlay').innerHTML = `
             <button class="close-overlay" onclick="app.closeOverlays()">✕</button>
-            <h2>Insights</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <span class="stat-value">${rate}%</span>
-                    <span class="stat-label">Efficiency</span>
+            <div class="overlay-scroll-container">
+                <h2 class="overlay-title">Insights</h2>
+                
+                <div class="metrics-hero">
+                    <span class="hero-label">Productivity Score</span>
+                    <span class="hero-value">${productivityScore}</span>
                 </div>
-                <div class="stat-card">
-                    <span class="stat-value">${streak}</span>
-                    <span class="stat-label">Day Streak</span>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-value">${rate}%</span>
+                        <span class="stat-label">Efficiency</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">${streak}</span>
+                        <span class="stat-label">Day Streak</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">${done}</span>
+                        <span class="stat-label">Completed</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">${focusPoints}</span>
+                        <span class="stat-label">Focus Points</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">${highPriority}</span>
+                        <span class="stat-label">High Priority</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">${midPriority}</span>
+                        <span class="stat-label">Medium</span>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <span class="stat-value">${done}</span>
-                    <span class="stat-label">Completed</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-value">${highPriority}</span>
-                    <span class="stat-label">High Priority</span>
-                </div>
-            </div>
-            
-            <div style="margin-top: 30px;">
-                <span class="section-title">Weekly Focus</span>
-                <div style="height: 140px; display: flex; align-items: flex-end; gap: 8px; margin-top: 20px;">
-                    ${[...Array(7)].map((_, i) => {
+                
+                <div class="chart-section" style="margin-top: 30px;">
+                    <span class="section-title">Weekly Focus</span>
+                    <div class="bar-chart-container">
+                        ${[...Array(7)].map((_, i) => {
             const h = 20 + Math.random() * 80;
             const isToday = i === 6;
-            return `<div style="flex:1; background: ${isToday ? 'var(--text-primary)' : 'rgba(255,255,255,0.1)'}; height: ${h}%; border-radius: 8px; transition: height 1s ease;"></div>`;
+            return `<div class="chart-bar" style="height: ${h}%; background: ${isToday ? 'var(--text-primary)' : 'rgba(255,255,255,0.1)'};"></div>`;
         }).join('')}
+                    </div>
+                    <div class="chart-labels">
+                        <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                    </div>
                 </div>
-                <div style="display: flex; justify-content: space-between; margin-top: 10px; color: var(--text-tertiary); font-size: 10px; text-transform: uppercase;">
-                    <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+
+                <div class="insight-tips">
+                    <div class="tip-card">
+                        <span class="tip-icon">⌛</span>
+                        <span class="tip-text">Estimated <b>${estimatedTime}m</b> focused time saved.</span>
+                    </div>
+                    <div class="tip-card">
+                        <span class="tip-icon">🎯</span>
+                        <span class="tip-text">Your peak productivity is <b>High Priority</b> tasks.</span>
+                    </div>
                 </div>
             </div>
         `;
@@ -133,71 +171,97 @@ class DoneApp {
         // Settings Overlay
         document.getElementById('settingsOverlay').innerHTML = `
             <button class="close-overlay" onclick="app.closeOverlays()">✕</button>
-            <h2 class="settings-title">Settings</h2>
-            
-            <div class="settings-container">
-                <div class="settings-section">
-                    <span class="section-title">Preference</span>
-                    <div class="settings-group">
-                        <div class="setting-item">
-                            <div class="setting-label">
-                                <span class="setting-name">Haptic Feedback</span>
-                                <span class="setting-desc">Tactile response on actions</span>
+            <div class="overlay-scroll-container">
+                <h2 class="settings-title">Settings</h2>
+                
+                <div class="settings-container">
+                    <div class="settings-section">
+                        <span class="section-title">Preference</span>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <span class="setting-name">Haptic Feedback</span>
+                                    <span class="setting-desc">Tactile response on actions</span>
+                                </div>
+                                <label class="ios-toggle-wrapper">
+                                    <input type="checkbox" ${this.settings.haptics ? 'checked' : ''} onchange="app.toggleSetting('haptics')">
+                                    <div class="ios-toggle"></div>
+                                </label>
                             </div>
-                            <label class="ios-toggle-wrapper">
-                                <input type="checkbox" ${this.settings.haptics ? 'checked' : ''} onchange="app.toggleSetting('haptics')">
-                                <div class="ios-toggle"></div>
-                            </label>
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <span class="setting-name">Deep Focus Mode</span>
+                                    <span class="setting-desc">Mute all non-essential UI</span>
+                                </div>
+                                <label class="ios-toggle-wrapper">
+                                    <input type="checkbox" ${this.settings.deepFocus ? 'checked' : ''} onchange="app.toggleSetting('deepFocus')">
+                                    <div class="ios-toggle"></div>
+                                </label>
+                            </div>
+                            <div class="setting-item" onclick="app.cycleTheme()">
+                                <div class="setting-label">
+                                    <span class="setting-name">Appearance</span>
+                                    <span class="setting-desc">${this.settings.theme.charAt(0).toUpperCase() + this.settings.theme.slice(1)} Mode</span>
+                                </div>
+                                <div class="setting-value-hint">
+                                    ${this.settings.theme === 'dark' ? '🌙' : this.settings.theme === 'light' ? '☀️' : '🌗'}
+                                </div>
+                            </div>
                         </div>
-                        <div class="setting-item" onclick="app.cycleTheme()">
-                            <div class="setting-label">
-                                <span class="setting-name">Appearance</span>
-                                <span class="setting-desc">${this.settings.theme.charAt(0).toUpperCase() + this.settings.theme.slice(1)} Mode</span>
+                    </div>
+
+                    <div class="settings-section">
+                        <span class="section-title">Workflow</span>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <span class="setting-name">Auto-Sort</span>
+                                    <span class="setting-desc">Prioritize higher tasks automatically</span>
+                                </div>
+                                <label class="ios-toggle-wrapper">
+                                    <input type="checkbox" ${this.settings.autoSort ? 'checked' : ''} onchange="app.toggleSetting('autoSort')">
+                                    <div class="ios-toggle"></div>
+                                </label>
                             </div>
-                            <div class="setting-value-hint">
-                                ${this.settings.theme === 'dark' ? '🌙' : this.settings.theme === 'light' ? '☀️' : '🌗'}
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <span class="setting-name">Auto-Clear Done</span>
+                                    <span class="setting-desc">Remove completed tasks in 24h</span>
+                                </div>
+                                <label class="ios-toggle-wrapper">
+                                    <input type="checkbox" ${this.settings.autoClear ? 'checked' : ''} onchange="app.toggleSetting('autoClear')">
+                                    <div class="ios-toggle"></div>
+                                </label>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="settings-section">
-                    <span class="section-title">Workflow</span>
-                    <div class="settings-group">
-                        <div class="setting-item">
-                            <div class="setting-label">
-                                <span class="setting-name">Auto-Sort</span>
-                                <span class="setting-desc">Keep priority tasks at top</span>
-                            </div>
-                            <label class="ios-toggle-wrapper">
-                                <input type="checkbox" ${this.settings.autoSort ? 'checked' : ''} onchange="app.toggleSetting('autoSort')">
-                                <div class="ios-toggle"></div>
-                            </label>
+                    <div class="settings-section">
+                        <span class="section-title">Security & Backup</span>
+                        <div class="settings-group">
+                            <button class="setting-btn" onclick="app.exportData()">
+                                <span>Cloud Sync </span>
+                                <span class="sync-status">Connected</span>
+                            </button>
+                            <button class="setting-btn" onclick="app.exportData()">
+                                <span>Export Backup</span>
+                                <span class="btn-icon">↓</span>
+                            </button>
+                            <button class="setting-btn" onclick="app.importData()">
+                                <span>Restore Data</span>
+                                <span class="btn-icon">↑</span>
+                            </button>
+                            <button class="danger-btn" onclick="app.clearData()">
+                                <span>Wipe Everything</span>
+                                <span class="btn-icon">×</span>
+                            </button>
                         </div>
                     </div>
-                </div>
 
-                <div class="settings-section">
-                    <span class="section-title">Data</span>
-                    <div class="settings-group">
-                        <button class="setting-btn" onclick="app.exportData()">
-                            <span>Export JSON</span>
-                            <span class="btn-icon">↓</span>
-                        </button>
-                        <button class="setting-btn" onclick="app.importData()">
-                            <span>Import JSON</span>
-                            <span class="btn-icon">↑</span>
-                        </button>
-                        <button class="danger-btn" onclick="app.clearData()">
-                            <span>Clear All Data</span>
-                            <span class="btn-icon">×</span>
-                        </button>
+                    <div class="app-info">
+                        <span class="app-version">Done v1.2.5</span>
+                        <span class="app-credit">Designed for Focus • © 2026</span>
                     </div>
-                </div>
-
-                <div class="app-info">
-                    <span class="app-version">Done v1.2.0</span>
-                    <span class="app-credit">Designed for Focus</span>
                 </div>
             </div>
         `;

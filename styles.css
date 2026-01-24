@@ -125,10 +125,148 @@ body {
 }
 
 
+/* Dedicated Scroll Container for Overlays */
+.overlay-scroll-container {
+    height: 100%;
+    overflow-y: auto;
+    padding-bottom: 40px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.overlay-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.overlay-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    letter-spacing: -1px;
+}
+
+/* Insights Hero Metric */
+.metrics-hero {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%);
+    border-radius: 28px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.hero-label {
+    display: block;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+}
+
+.hero-value {
+    font-size: 72px;
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(to bottom, #fff, #999);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Improved Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.04);
+    padding: 24px;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    display: block;
+    color: #fff;
+}
+
+.stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-tertiary);
+    font-weight: 600;
+}
+
+/* Charts */
+.bar-chart-container {
+    height: 120px;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin: 24px 0 12px;
+}
+
+.chart-bar {
+    flex: 1;
+    border-radius: 8px;
+    transition: height 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chart-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    padding: 0 4px;
+}
+
+/* Insight Tips */
+.insight-tips {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tip-card {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 18px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.tip-icon {
+    font-size: 20px;
+}
+
+.tip-text {
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+.tip-text b {
+    color: #fff;
+    font-weight: 700;
+}
+
 .overlay-page.active {
     opacity: 1;
     pointer-events: auto;
-    transform: scale(1);
+    transform: translateY(0);
 }
 
 /* Close Button for Overlays */
@@ -756,33 +894,15 @@ input:disabled+.ios-toggle {
     opacity: 0.5;
 }
 
-.stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 30px;
-}
-
-.stat-card {
-    background: #111;
-    padding: 24px;
-    border-radius: 20px;
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.stat-value {
-    font-size: 32px;
+/* Sync Status Styling */
+.sync-status {
+    font-size: 10px;
+    text-transform: uppercase;
+    background: rgba(46, 213, 115, 0.2);
+    color: #2ed573;
+    padding: 4px 8px;
+    border-radius: 10px;
     font-weight: 700;
-    display: block;
-    line-height: 1;
-    margin-bottom: 8px;
-}
-
-.stat-label {
-    font-size: 13px;
-    color: var(--text-tertiary);
-    font-weight: 400;
 }
 
 /* Light Mode Overrides */
