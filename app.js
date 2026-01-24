@@ -206,10 +206,13 @@ class DoneApp {
         let typeTimeout;
         input.addEventListener('input', () => {
             input.classList.add('typing');
+            inputContainer.classList.add('typing');
+
             clearTimeout(typeTimeout);
             typeTimeout = setTimeout(() => {
                 input.classList.remove('typing');
-            }, 100); // Fast flash 100ms
+                inputContainer.classList.remove('typing');
+            }, 100); // Fast flash
         });
 
         // Task List Delegation
@@ -288,14 +291,13 @@ class DoneApp {
     addTask() {
         const input = document.getElementById('taskInput');
         const text = input.value.trim();
-        const isHigh = document.getElementById('priorityToggle').classList.contains('high');
 
         if (!text) return;
 
         this.tasks.unshift({
             id: Date.now(),
             text,
-            priority: isHigh ? 'high' : 'normal',
+            priority: 'normal',
             completed: false
         });
 
@@ -305,6 +307,7 @@ class DoneApp {
 
         // Flash input to signal success
         input.classList.remove('typing');
+        document.getElementById('inputContainer').classList.remove('typing');
 
         // Recalculate overlays if open (live update)
         if (document.querySelector('.overlay-page.active')) {
