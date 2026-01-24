@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -27,8 +27,7 @@
 
         <!-- Floating Input Bar -->
         <div class="minimal-input-container" id="inputContainer">
-            <input type="text" id="taskInput" placeholder="Type a task..." autocomplete="off" inputmode="search"
-                enterkeyhint="go">
+            <div id="taskInput" class="task-input-div" contenteditable="true" placeholder="Type a task..."></div>
             <button id="submitBtn" class="submit-arrow">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
                     stroke-linejoin="round">

@@ -20,6 +20,7 @@
     /* App-like feel */
 }
 
+/* Full Bleed iOS Support */
 html,
 body {
     height: 100%;
@@ -30,6 +31,9 @@ body {
     background: var(--bg-primary);
     font-family: 'Poppins', -apple-system, sans-serif;
     color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    /* Full bleed */
 }
 
 /* Hide scrollbar for seamless look */
@@ -56,8 +60,8 @@ body {
     overflow-x: hidden;
     position: relative;
     z-index: 10;
-    padding: var(--safe-top) 20px 120px;
-    /* Ample space for bottom fab */
+    /* Ensure content doesn't get hidden behind safe area, but allow background to flow */
+    padding: var(--safe-top) 20px calc(100px + env(safe-area-inset-bottom));
     -webkit-overflow-scrolling: touch;
 }
 
@@ -234,31 +238,40 @@ body {
     pointer-events: auto;
 }
 
-#taskInput {
+/* ContentEditable Input (No iOS Bar) */
+.task-input-div {
     flex: 1;
     background: transparent;
     border: none;
     color: var(--text-tertiary);
-    /* Default to dim */
     font-size: 16px;
     font-family: inherit;
     outline: none;
     padding: 0;
     transition: color 0.5s ease;
-    /* Slow fade back */
+    min-width: 50px;
+    white-space: nowrap;
+    overflow: hidden;
+    user-select: text;
+    -webkit-user-select: text;
 }
 
-#taskInput.typing {
+.task-input-div.typing {
     color: var(--text-primary);
-    /* Bright white/black on type */
     transition: none;
-    /* Instant change */
 }
 
-#taskInput::placeholder {
+/* Placeholder for contenteditable */
+.task-input-div:empty:before {
+    content: attr(placeholder);
     color: var(--text-tertiary);
     opacity: 0.5;
+    pointer-events: none;
+    display: block;
+    /* Ensure it shows up */
 }
+
+/* Hide actual text node when empty if needed, usually :empty handles it */
 
 /* Submit Arrow */
 .submit-arrow {

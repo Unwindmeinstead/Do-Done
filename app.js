@@ -199,7 +199,10 @@ class DoneApp {
 
         // Input Handling
         input.addEventListener('keydown', e => {
-            if (e.key === 'Enter') this.addTask();
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Prevent new line in contenteditable
+                this.addTask();
+            }
         });
 
         // Flash Effect on Type
@@ -272,7 +275,12 @@ class DoneApp {
         } else {
             bar.classList.add('active');
             document.getElementById('bottomNav').classList.add('hidden');
-            setTimeout(() => document.getElementById('taskInput').focus(), 100);
+            // Small delay to ensure transition starts
+            setTimeout(() => {
+                const el = document.getElementById('taskInput');
+                el.focus();
+                // Move cursor to end if needed (though usually empty)
+            }, 100);
             this.inputActive = true;
         }
     }
@@ -290,12 +298,13 @@ class DoneApp {
 
     addTask() {
         const input = document.getElementById('taskInput');
-        const text = input.value.trim();
+        // contenteditable uses innerText/textContent
+        const text = input.innerText.trim();
 
         if (!text) return;
 
         // Visual Feedback Immediate
-        input.value = '';
+        input.innerText = ''; // Clear text content
         input.classList.remove('typing');
         document.getElementById('inputContainer').classList.remove('typing');
         input.blur(); // Dismiss keyboard to show splash clearly
