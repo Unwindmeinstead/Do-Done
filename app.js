@@ -11,6 +11,7 @@ class DoneApp {
         };
         this.mode = 0; // 0: Tasks, 1: Insights, 2: Settings
         this.inputActive = false;
+        this.navSelection = 0;
 
         this.init();
     }
@@ -22,6 +23,7 @@ class DoneApp {
         this.renderTasks();
         this.renderOverlays(); // Prepare hidden overlays
         this.setupInteractions();
+        this.setupViewportHandlers();
         setTimeout(() => this.updateNavUI(), 100);
     }
 
@@ -281,8 +283,8 @@ class DoneApp {
         bottomNav.addEventListener('touchend', e => {
             const diff = e.changedTouches[0].clientX - startX;
             if (Math.abs(diff) > 40) {
-                if (diff > 0 && this.mode > 0) this.setMode(this.mode - 1);
-                else if (diff < 0 && this.mode < 2) this.setMode(this.mode + 1);
+                if (diff > 0) this.shiftNavSelection(-1);
+                else if (diff < 0) this.shiftNavSelection(1);
             }
         }, { passive: true });
 
@@ -348,6 +350,7 @@ class DoneApp {
         }
 
         this.mode = m;
+        this.navSelection = m;
         this.updateNavUI();
         this.haptic();
 
@@ -359,31 +362,38 @@ class DoneApp {
     }
 
     updateNavUI() {
-        // Update active class on items
-        document.querySelectorAll('.nav-item').forEach(el => {
-            el.classList.toggle('active', parseInt(el.dataset.mode) === this.mode);
-        });
+        const navLabel = document.getElementById('navMainLabel');
+        const navIcon = document.getElementById('navMainIcon');
+        if (!navLabel || !navIcon) return;
 
-        // Move indicator
-        const indicator = document.getElementById('navIndicator');
-        const items = [
-            document.getElementById('navInsights'),
-            document.getElementById('navTasks'),
-            document.getElementById('navSettings')
+        const navModes = [
+            { mode: 0, label: 'Tasks', icon: '✓' },
+            { mode: 1, label: 'Insights', icon: '▥' },
+            { mode: 2, label: 'Settings', icon: '⚙︎' }
         ];
+        const active = navModes.find(item => item.mode === this.navSelection) || navModes[0];
+        navLabel.textContent = active.label;
+        navIcon.textContent = active.icon;
 
-        // The modes are 0:Tasks, 1:Insights, 2:Settings. 
-        // In HTML they are ordered: Insights (1), Tasks (0), Settings (2)
-        const order = [1, 0, 2];
-        const index = order.indexOf(this.mode);
+        const navBtn = document.getElementById('navMainBtn');
+        if (navBtn) navBtn.classList.toggle('selected', this.navSelection !== this.mode);
+    }
 
-        if (indicator) {
-            const track = document.getElementById('navTrack');
-            const trackWidth = track.offsetWidth || 204; // Fallback if not yet rendered
-            const itemWidth = (trackWidth) / 3;
-            indicator.style.width = `${itemWidth}px`;
-            indicator.style.transform = `translateX(${index * itemWidth}px)`;
+    handleNavTap() {
+        if (this.navSelection === this.mode && this.mode === 0) {
+            this.toggleInput();
+            return;
         }
+        this.setMode(this.navSelection);
+    }
+
+    shiftNavSelection(delta) {
+        const modes = [0, 1, 2];
+        const currentIndex = modes.indexOf(this.navSelection);
+        const nextIndex = Math.max(0, Math.min(modes.length - 1, currentIndex + delta));
+        this.navSelection = modes[nextIndex];
+        this.updateNavUI();
+        this.haptic();
     }
 
     toggleInput() {
@@ -576,6 +586,31 @@ class DoneApp {
             else document.documentElement.setAttribute('data-theme', 'light');
             document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#000000' : '#ffffff');
         }
+    }
+
+    setupViewportHandlers() {
+        const updateAppHeight = () => {
+            const height = window.innerHeight || document.documentElement.clientHeight;
+            document.documentElement.style.setProperty('--app-height', `${height}px`);
+        };
+
+        const updateKeyboardOffset = () => {
+            if (!window.visualViewport) return;
+            const offset = Math.max(0, window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop);
+            document.documentElement.style.setProperty('--keyboard-offset', `${offset}px`);
+            document.documentElement.classList.toggle('keyboard-open', offset > 0);
+        };
+
+        updateAppHeight();
+        updateKeyboardOffset();
+        window.addEventListener('resize', updateAppHeight, { passive: true });
+        window.visualViewport?.addEventListener('resize', updateKeyboardOffset, { passive: true });
+        window.visualViewport?.addEventListener('scroll', updateKeyboardOffset, { passive: true });
+
+        const media = window.matchMedia('(prefers-color-scheme: dark)');
+        media.addEventListener?.('change', () => {
+            if (this.settings.theme === 'auto') this.applyTheme();
+        });
     }
 
     exportData() {
