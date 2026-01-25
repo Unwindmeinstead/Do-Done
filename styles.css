@@ -295,8 +295,8 @@ body {
     /* Floating higher as requested */
     left: 50%;
     transform: translateX(-50%);
-    width: 92px;
-    height: 92px;
+    width: 80px;
+    height: 80px;
     background: transparent;
     border-radius: 50%;
     display: flex;
@@ -337,8 +337,8 @@ body {
 }
 
 .nav-main-icon {
-    width: 60px;
-    height: 60px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
@@ -347,8 +347,8 @@ body {
 }
 
 .nav-main-icon svg {
-    width: 54px;
-    height: 54px;
+    width: 40px;
+    height: 40px;
     stroke: currentColor;
 }
 

@@ -370,17 +370,17 @@ class DoneApp {
             {
                 mode: 0,
                 label: 'Tasks',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>`
+                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 13 9 18 20 6" /></svg>`
             },
             {
                 mode: 1,
                 label: 'Insights',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10" /><path d="M10 20V4" /><path d="M16 20v-8" /><path d="M22 20H2" /></svg>`
+                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 5" /><line x1="3" y1="21" x2="21" y2="21" /></svg>`
             },
             {
                 mode: 2,
                 label: 'Settings',
-                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" /><path d="M19.4 15a7.8 7.8 0 0 0 .1-1l2-1.2-2-3.5-2.3.4a7.2 7.2 0 0 0-1.7-1l-.4-2.3H9.9l-.4 2.3a7.2 7.2 0 0 0-1.7 1l-2.3-.4-2 3.5 2 1.2a7.8 7.8 0 0 0 0 2l-2 1.2 2 3.5 2.3-.4a7.2 7.2 0 0 0 1.7 1l.4 2.3h4.2l.4-2.3a7.2 7.2 0 0 0 1.7-1l2.3.4 2-3.5-2-1.2Z" /></svg>`
+                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 12a7.4 7.4 0 0 0-.1-1l1.8-1.4-2-3.4-2.2.6a7.4 7.4 0 0 0-1.7-1l-.4-2.3H9.2l-.4 2.3a7.4 7.4 0 0 0-1.7 1l-2.2-.6-2 3.4 1.8 1.4a7.4 7.4 0 0 0 0 2.1l-1.8 1.4 2 3.4 2.2-.6a7.4 7.4 0 0 0 1.7 1l.4 2.3h4.2l.4-2.3a7.4 7.4 0 0 0 1.7-1l2.2.6 2-3.4-1.8-1.4Z" /></svg>`
             }
         ];
         const active = navModes.find(item => item.mode === this.navSelection) || navModes[0];
