@@ -367,13 +367,25 @@ class DoneApp {
         if (!navLabel || !navIcon) return;
 
         const navModes = [
-            { mode: 0, label: 'Tasks', icon: '✓' },
-            { mode: 1, label: 'Insights', icon: '▥' },
-            { mode: 2, label: 'Settings', icon: '⚙︎' }
+            {
+                mode: 0,
+                label: 'Tasks',
+                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>`
+            },
+            {
+                mode: 1,
+                label: 'Insights',
+                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10" /><path d="M10 20V4" /><path d="M16 20v-8" /><path d="M22 20H2" /></svg>`
+            },
+            {
+                mode: 2,
+                label: 'Settings',
+                icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" /><path d="M19.4 15a7.8 7.8 0 0 0 .1-1l2-1.2-2-3.5-2.3.4a7.2 7.2 0 0 0-1.7-1l-.4-2.3H9.9l-.4 2.3a7.2 7.2 0 0 0-1.7 1l-2.3-.4-2 3.5 2 1.2a7.8 7.8 0 0 0 0 2l-2 1.2 2 3.5 2.3-.4a7.2 7.2 0 0 0 1.7 1l.4 2.3h4.2l.4-2.3a7.2 7.2 0 0 0 1.7-1l2.3.4 2-3.5-2-1.2Z" /></svg>`
+            }
         ];
         const active = navModes.find(item => item.mode === this.navSelection) || navModes[0];
         navLabel.textContent = active.label;
-        navIcon.textContent = active.icon;
+        navIcon.innerHTML = active.icon;
 
         const navBtn = document.getElementById('navMainBtn');
         if (navBtn) navBtn.classList.toggle('selected', this.navSelection !== this.mode);
